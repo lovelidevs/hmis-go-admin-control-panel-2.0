@@ -1,10 +1,15 @@
 import React from "react";
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 
 import AuthProvider from "./Authentication/AuthProvider";
 import RequireAuth from "./Authentication/RequireAuth";
 import Home from "./Routes/Home";
+import Reports from "./Routes/Home/Reports";
 import Login from "./Routes/Login";
 import RequestAccess from "./Routes/RequestAccess";
 import RequestResetPassword from "./Routes/RequestResetPassword";
@@ -23,6 +28,10 @@ const App = () => {
           <Home />
         </RequireAuth>
       ),
+      children: [
+        { index: true, element: <Navigate to="reports" replace /> },
+        { path: "reports", element: <Reports /> },
+      ],
     },
   ]);
 

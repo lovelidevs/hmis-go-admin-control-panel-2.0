@@ -1,33 +1,30 @@
-import React, { KeyboardEventHandler } from "react";
-
-const LLLegendInput = ({
+const LLLegendSelect = ({
   legend,
-  type,
   value,
   onChange,
-  onKeyUp,
-  autoFocus,
+  options,
 }: {
   legend: string;
-  type: React.HTMLInputTypeAttribute;
   value: string;
   onChange: (value: string) => void;
-  onKeyUp?: KeyboardEventHandler<HTMLInputElement>;
-  autoFocus?: boolean;
-}): JSX.Element => {
+  options: string[];
+}) => {
   return (
     <fieldset className="rounded-lg border border-black pt-1 pb-2 px-2">
       <legend className="text-cyan-300 px-2">{legend}</legend>
-      <input
+      <select
         className="bg-transparent px-1"
-        type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        onKeyUp={onKeyUp}
-        autoFocus={autoFocus}
-      />
+      >
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
     </fieldset>
   );
 };
 
-export default LLLegendInput;
+export default LLLegendSelect;
