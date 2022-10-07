@@ -73,7 +73,12 @@ const RequestAccess = () => {
               autoFocus={true}
             />
           </div>
-          <LLButton type="submit">Send Request</LLButton>
+          <div className="flex flex-row flex-nowrap justify-center items-center space-x-4">
+            <LLButton type="submit">Send Request</LLButton>
+            <LLButton type="button" onClick={authContext?.logOut}>
+              Log Out
+            </LLButton>
+          </div>
           {authContext?.userData?.status !== "" && (
             <p>{`Request is ${authContext?.userData?.status.toUpperCase()} to join organization ${
               authContext?.userData?.organization
