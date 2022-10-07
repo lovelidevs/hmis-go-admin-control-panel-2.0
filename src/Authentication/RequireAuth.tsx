@@ -13,12 +13,12 @@ const RequireAuth = ({
 }): JSX.Element => {
   const authContext = useContext(AuthContext);
 
-  if (!authContext?.isAuthenticated()) {
+  if (!authContext?.user) {
     return <Navigate to="/login" replace />;
   }
 
   if (authContext?.userData?.status !== "confirmed") {
-    // TODO: request access
+    return <Navigate to="/request-access" replace />;
   }
 
   if (requireAdminAuth && authContext.userData?.role !== "admin") {

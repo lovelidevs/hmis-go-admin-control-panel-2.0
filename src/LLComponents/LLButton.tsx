@@ -11,7 +11,7 @@ const LLButton = ({
 }) => {
   return (
     <button
-      className="text-white rounded bg-cyan-300 hover:bg-cyan-400 px-4 py-2"
+      className="text-black rounded bg-cyan-300 hover:bg-cyan-400 px-4 py-2"
       type={type}
       onClick={onClick}
     >

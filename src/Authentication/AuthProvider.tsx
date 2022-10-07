@@ -13,9 +13,13 @@ import { UserDatum } from "../API/UserDataProvider";
 type AuthContextType = {
   user: Realm.User | null;
   userData: UserDatum | null;
-  isAuthenticated: () => boolean;
+  refreshUserData: () => Promise<void>;
   logIn: (email: string, password: string) => Promise<void>;
   logOut: () => Promise<void>;
+  registerUser: (email: string, password: string) => Promise<void>;
+  resendConfirmationEmail: (email: string) => Promise<void>;
+  requestAccess: (organization: string) => Promise<void>;
+  sendResetPasswordEmail: (email: string) => Promise<void>;
 };
 
 export const AuthContext = React.createContext<AuthContextType | null>(null);
@@ -45,10 +49,6 @@ const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     refreshUserData(user);
   }, [user, refreshUserData]);
 
-  const isAuthenticated = (): boolean => {
-    return realmApp.current.currentUser !== null;
-  };
-
   const logIn = async (email: string, password: string) => {
     const emailToLowerCase = email.toLowerCase();
 
@@ -57,9 +57,15 @@ const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
         Realm.Credentials.emailPassword(emailToLowerCase, password)
       );
 
-      if (!realmUser) throw new Error("Unable to log in");
+      if (!realmUser) throw new Error("Error logging in");
 
-      // TODO: Custom Data stuff
+      if (!(realmUser.customData as UserDatum)?._id) {
+        const result = await realmUser.functions.insertUserDatum([
+          emailToLowerCase,
+        ]);
+
+        if (!result.insertId) throw result;
+      }
 
       setUser(realmUser);
     } catch (error) {
@@ -72,11 +78,69 @@ const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     setUser(null);
   };
 
-  // TODO: All the other Auth stuff, register, requestAccess, etc...
+  const registerUser = async (email: string, password: string) => {
+    const emailToLowerCase = email.toLowerCase();
+
+    try {
+      await realmApp.current.emailPasswordAuth.registerUser(
+        emailToLowerCase,
+        password
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const resendConfirmationEmail = async (email: string) => {
+    const emailToLowerCase = email.toLowerCase();
+
+    try {
+      await realmApp.current.emailPasswordAuth.resendConfirmationEmail(
+        emailToLowerCase
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const requestAccess = async (organization: string) => {
+    try {
+      const result = await user?.functions.requestAccess([organization]);
+
+      if (!result.matchedCount) throw result;
+      if (result.matchedCount === 0) throw new Error("Error requesting access");
+    } catch (error) {
+      throw error;
+    }
+
+    refreshUserData(user);
+  };
+
+  const sendResetPasswordEmail = async (email: string) => {
+    const emailToLowerCase = email.toLowerCase();
+
+    try {
+      await realmApp.current.emailPasswordAuth.sendResetPasswordEmail(
+        emailToLowerCase
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
 
   return (
     <AuthContext.Provider
-      value={{ user, userData, isAuthenticated, logIn, logOut }}
+      value={{
+        user,
+        userData,
+        refreshUserData: () => refreshUserData(user),
+        logIn,
+        logOut,
+        registerUser,
+        resendConfirmationEmail,
+        requestAccess,
+        sendResetPasswordEmail,
+      }}
     >
       {children}
     </AuthContext.Provider>
