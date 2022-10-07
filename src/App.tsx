@@ -6,6 +6,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
+import APIProvider from "./API/APIProvider";
 import AuthProvider from "./Authentication/AuthProvider";
 import RequireAuth from "./Authentication/RequireAuth";
 import Home from "./Routes/Home";
@@ -38,7 +39,9 @@ const App = () => {
   return (
     <React.StrictMode>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <APIProvider>
+          <RouterProvider router={router} />
+        </APIProvider>
       </AuthProvider>
     </React.StrictMode>
   );

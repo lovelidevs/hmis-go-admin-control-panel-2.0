@@ -14,6 +14,7 @@ type AuthContextType = {
   user: Realm.User | null;
   userData: UserDatum | null;
   refreshUserData: () => Promise<void>;
+  getAccessToken: () => Promise<string | null>;
   logIn: (email: string, password: string) => Promise<void>;
   logOut: () => Promise<void>;
   registerUser: (email: string, password: string) => Promise<void>;
@@ -48,6 +49,13 @@ const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   useEffect(() => {
     refreshUserData(user);
   }, [user, refreshUserData]);
+
+  const getAccessToken = async () => {
+    if (!user) return null;
+
+    await refreshUserData(user);
+    return user.accessToken;
+  };
 
   const logIn = async (email: string, password: string) => {
     const emailToLowerCase = email.toLowerCase();
@@ -134,6 +142,7 @@ const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
         user,
         userData,
         refreshUserData: () => refreshUserData(user),
+        getAccessToken,
         logIn,
         logOut,
         registerUser,
