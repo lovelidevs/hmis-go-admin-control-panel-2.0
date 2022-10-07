@@ -1,6 +1,6 @@
 import { ForwardedRef, forwardRef } from "react";
 
-import LLDialogButton from "./LLDialogButton";
+import LLButton from "./LLButton";
 
 type LLOkDialogProps = {
   message: string;
@@ -14,9 +14,12 @@ const LLOkDialog = forwardRef<HTMLDialogElement, LLOkDialogProps>(
   ) => {
     return (
       <dialog ref={ref}>
-        <form method="dialog">
+        <form
+          className="flex flex-col flex-nowrap justify-start items-center space-y-4"
+          method="dialog"
+        >
           <p>{message}</p>
-          <LLDialogButton onClick={callback}>OK</LLDialogButton>
+          <LLButton onClick={callback}>OK</LLButton>
         </form>
       </dialog>
     );
