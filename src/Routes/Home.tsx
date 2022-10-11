@@ -10,19 +10,22 @@ const Home = (): JSX.Element => {
   const authContext = useContext(AuthContext);
 
   return (
-    <main className="w-full min-h-screen bg-stone-100">
+    <main className="w-screen h-screen bg-stone-100 flex flex-col flex-nowrap justify-start items-stretch">
       <div className="flex flex-row flex-nowrap justify-between items-center bg-gray-800 px-4 py-3 text-xl">
         <LLButton twStyle="invisible" type="button">
           Log Out
         </LLButton>
         <nav className="flex flex-row flex-nowrap justify-center items-center space-x-3">
           <LLNavLink to="reports">Reports</LLNavLink>
+          <LLNavLink to="services">Services</LLNavLink>
         </nav>
         <LLButton type="button" onClick={authContext?.logOut}>
           Log Out
         </LLButton>
       </div>
-      <Outlet />
+      <div className="w-full h-full overflow-scroll shrink">
+        <Outlet />
+      </div>
     </main>
   );
 };

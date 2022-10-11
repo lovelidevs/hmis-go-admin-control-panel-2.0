@@ -79,7 +79,7 @@ const RequestAccess = () => {
               Log Out
             </LLButton>
           </div>
-          {authContext?.userData?.status !== "" && (
+          {authContext?.userData?.status && (
             <p>{`Request is ${authContext?.userData?.status.toUpperCase()} to join organization ${
               authContext?.userData?.organization
             }`}</p>

@@ -13,8 +13,6 @@ import { UserDatum } from "../API/UserDataProvider";
 type AuthContextType = {
   user: Realm.User | null;
   userData: UserDatum | null;
-  refreshUserData: () => Promise<void>;
-  getAccessToken: () => Promise<string | null>;
   logIn: (email: string, password: string) => Promise<void>;
   logOut: () => Promise<void>;
   registerUser: (email: string, password: string) => Promise<void>;
@@ -38,10 +36,10 @@ const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     user?.customData ? (user.customData as UserDatum) : null
   );
 
-  const refreshUserData = useCallback(async (user: Realm.User | null) => {
-    if (!user) return setUserData(null);
+  const refreshUserData = useCallback(async (realmUser: Realm.User | null) => {
+    if (!realmUser) return setUserData(null);
 
-    const customData = await user.refreshCustomData();
+    const customData = await realmUser.refreshCustomData();
 
     setUserData(customData ? (customData as UserDatum) : null);
   }, []);
@@ -49,13 +47,6 @@ const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   useEffect(() => {
     refreshUserData(user);
   }, [user, refreshUserData]);
-
-  const getAccessToken = async () => {
-    if (!user) return null;
-
-    await refreshUserData(user);
-    return user.accessToken;
-  };
 
   const logIn = async (email: string, password: string) => {
     const emailToLowerCase = email.toLowerCase();
@@ -141,8 +132,6 @@ const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
       value={{
         user,
         userData,
-        refreshUserData: () => refreshUserData(user),
-        getAccessToken,
         logIn,
         logOut,
         registerUser,
