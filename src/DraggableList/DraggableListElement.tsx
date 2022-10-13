@@ -1,4 +1,10 @@
-import { DragEventHandler, MouseEventHandler, useRef } from "react";
+import {
+  DragEventHandler,
+  MouseEventHandler,
+  ReactNode,
+  useRef,
+  useState,
+} from "react";
 
 import LLDebouncedInput from "../LLComponents/LLDebouncedInput";
 import LLMenuButtons from "../LLComponents/LLMenuButtons/LLMenuButtons";
@@ -13,6 +19,8 @@ const DraggableListElement = ({
   dragItemIndexes,
   activeIndexes,
   renderFx,
+  customButtonStatusInitFx,
+  customButton,
   onModify,
   onAdd,
   onRemove,
@@ -27,7 +35,13 @@ const DraggableListElement = ({
   arrayPropNames: string[];
   dragItemIndexes: number[];
   activeIndexes: number[];
-  renderFx: (data: any, onModify: (value: object) => void) => JSX.Element;
+  renderFx: (
+    data: any,
+    onModify: (value: object) => void,
+    customButtonStatus?: boolean
+  ) => JSX.Element;
+  customButtonStatusInitFx?: (data: any, nestLevel: number) => boolean;
+  customButton?: ReactNode;
   onModify: (
     child: HTMLDivElement,
     value: object,
@@ -40,6 +54,10 @@ const DraggableListElement = ({
   onDragEnd: () => void;
   onDragEnter: (child: HTMLDivElement, dropZoneIndexes?: number[]) => void;
 }): JSX.Element => {
+  const [customButtonStatus, setCustomButtonStatus] = useState<boolean>(
+    customButtonStatusInitFx ? customButtonStatusInitFx(data, nestLevel) : false
+  );
+
   const component = useRef<HTMLDivElement>(null);
   const dragImage = useRef<HTMLDivElement>(null);
   const uList = useRef<HTMLUListElement>(null);
@@ -183,7 +201,7 @@ const DraggableListElement = ({
       onClick={handleActivate}
     >
       <div
-        className={`flex flex-col flex-nowrap justify-start items-stretch rounded-xl space-y-2 ${
+        className={`flex flex-col flex-nowrap justify-start items-stretch rounded-xl space-y-2 mb-2 ${
           nestLevel === 1 && "bg-white border-l-8"
         } ${nestLevel === 1 && activeIndexes.length === 0 && "border-white"} ${
           nestLevel === 1 && activeIndexes.length > 0 && "border-cyan-300"
@@ -191,9 +209,9 @@ const DraggableListElement = ({
       >
         <div
           ref={dragImage}
-          className={`flex flex-col flex-nowrap justify-start items-stretch rounded-lg space-y-2 p-2 ml-2 mb-2 ${
-            nestLevel === 0 && "bg-stone-100"
-          }`}
+          className={`flex flex-col flex-nowrap justify-start items-stretch rounded-lg space-y-2 p-2 ml-2 ${
+            nestLevel > 0 && "mb-2"
+          } ${nestLevel === 0 && "bg-stone-100"}`}
         >
           <DragBar
             onDragStart={handleDragStart}
@@ -209,10 +227,17 @@ const DraggableListElement = ({
               value={data[dataPropNames[nestLevel]]}
               onChange={handleCategoryModify}
               placeholder={capitalize(dataPropNames[nestLevel])}
-              twStyle="text-2xl"
+              twStyle={((): string => {
+                if (nestLevel === 1) return "text-2xl";
+                if (nestLevel === 2) return "text-3xl text-white bg-gray-800";
+                return "";
+              })()}
             />
           )}
-          {nestLevel === 0 && renderFx(data, handleItemModify)}
+          {nestLevel === 0 &&
+            (customButtonStatusInitFx === undefined
+              ? renderFx(data, handleItemModify)
+              : renderFx(data, handleItemModify, customButtonStatus))}
         </div>
         {nestLevel > 0 &&
           activeIndexes.length > 0 &&
@@ -284,6 +309,21 @@ const DraggableListElement = ({
           if (!component.current) return;
           onRemove(component.current);
         }}
+        {...((): { customButtons?: JSX.Element } => {
+          if (nestLevel > 0 || !customButton)
+            return { customButtons: undefined };
+
+          return {
+            customButtons: (
+              <button
+                type="button"
+                onClick={() => setCustomButtonStatus(!customButtonStatus)}
+              >
+                {customButton}
+              </button>
+            ),
+          };
+        })()}
       />
     </div>
   );

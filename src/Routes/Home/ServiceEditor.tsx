@@ -63,8 +63,6 @@ const ServiceEditor = (): JSX.Element => {
       </main>
     );
 
-  // TODO: Add autosave stuff
-
   return (
     <main className="flex flex-col flex-nowrap justify-start items-center space-y-4 my-4">
       <LLAutosaveStatusBar

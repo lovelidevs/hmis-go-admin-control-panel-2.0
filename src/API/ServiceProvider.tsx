@@ -122,7 +122,7 @@ const ServiceProvider = ({
       service: "",
       inputType: "Toggle",
       units: "",
-      customList: [""],
+      customList: [],
     };
   }, []);
 

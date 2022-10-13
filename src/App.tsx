@@ -10,6 +10,7 @@ import APIProvider from "./API/APIProvider";
 import AuthProvider from "./Authentication/AuthProvider";
 import RequireAuth from "./Authentication/RequireAuth";
 import Home from "./Routes/Home";
+import LocationEditor from "./Routes/Home/LocationEditor";
 import Reports from "./Routes/Home/Reports";
 import ServiceEditor from "./Routes/Home/ServiceEditor";
 import Login from "./Routes/Login";
@@ -36,6 +37,7 @@ const App = () => {
         { index: true, element: <Navigate to="reports" replace /> },
         { path: "reports", element: <Reports /> },
         { path: "services", element: <ServiceEditor /> },
+        { path: "locations", element: <LocationEditor /> },
       ],
     },
   ]);

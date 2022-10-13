@@ -18,6 +18,7 @@ const Home = (): JSX.Element => {
         <nav className="flex flex-row flex-nowrap justify-center items-center space-x-3">
           <LLNavLink to="reports">Reports</LLNavLink>
           <LLNavLink to="services">Services</LLNavLink>
+          <LLNavLink to="locations">Locations</LLNavLink>
         </nav>
         <LLButton type="button" onClick={authContext?.logOut}>
           Log Out

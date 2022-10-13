@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 
 import isEqual from "lodash.isequal";
 
@@ -11,6 +11,11 @@ import {
   updateIndexes,
 } from "./DraggableListUtils";
 
+// TODO: Still need to implement the focusing stuff, from Service and Location, actually ALL levels, just search focus
+
+// TODO: Implement warning dialogue for delete and custom Button
+// TODO: We'll need another prop that is customButtonDialogMessage
+
 const DraggableList = ({
   data,
   nestLevels,
@@ -19,6 +24,8 @@ const DraggableList = ({
   newDataFxs,
   updateFx,
   renderFx,
+  customButtonStatusInitFx,
+  customButton,
 }: {
   data: any;
   nestLevels: number;
@@ -26,7 +33,13 @@ const DraggableList = ({
   arrayPropNames: string[];
   newDataFxs: (() => object)[];
   updateFx: (data: any) => void;
-  renderFx: (data: any, onModify: (value: object) => void) => JSX.Element;
+  renderFx: (
+    data: any,
+    onModify: (value: object) => void,
+    customButtonStatus?: boolean
+  ) => JSX.Element;
+  customButtonStatusInitFx?: (data: any, nestLevel: number) => boolean;
+  customButton?: ReactNode;
 }): JSX.Element => {
   const [dragItemIndexes, setDragItemIndexes] = useState<number[]>([]);
   const [activeIndexes, setActiveIndexes] = useState<number[]>([]);
@@ -149,7 +162,7 @@ const DraggableList = ({
   return (
     <ul
       ref={uList}
-      className="flex flex-col flex-nowrap justify-start items-center space-y-2"
+      className="flex flex-col flex-nowrap justify-start items-center"
     >
       {data[arrayPropNames[nestLevels]].map(
         (childData: { uuid: string; [key: string]: any }, index: number) => (
