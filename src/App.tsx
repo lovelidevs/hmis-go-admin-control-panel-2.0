@@ -27,7 +27,9 @@ const App = () => {
       path: "/",
       element: (
         <RequireAuth>
-          <Home />
+          <APIProvider>
+            <Home />
+          </APIProvider>
         </RequireAuth>
       ),
       children: [
@@ -41,9 +43,7 @@ const App = () => {
   return (
     <React.StrictMode>
       <AuthProvider>
-        <APIProvider>
-          <RouterProvider router={router} />
-        </APIProvider>
+        <RouterProvider router={router} />
       </AuthProvider>
     </React.StrictMode>
   );

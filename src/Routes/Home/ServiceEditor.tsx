@@ -1,12 +1,17 @@
 import { useContext } from "react";
 
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
+import omitDeep from "omit-deep-lodash";
 
 import {
   LOAD_SERVICE_DOCUMENT,
   ServiceContext,
+  ServiceData,
   ServiceDocument,
+  UPDATE_SERVICE_DOCUMENT,
 } from "../../API/ServiceProvider";
+import DraggableList from "../../DraggableList/DraggableList";
+import Service from "../../DraggableList/Service";
 import LLLoadingSpinner from "../../LLComponents/LLLoadingSpinner";
 
 const ServiceEditor = (): JSX.Element => {
@@ -16,51 +21,30 @@ const ServiceEditor = (): JSX.Element => {
     variables: { _id: serviceContext?.serviceDocumentId },
   });
 
-  const handleModify = (value: object, modifyIndexes: number[]) => {
-    const serviceDocumentClone = structuredClone(
-      data.service
-    ) as ServiceDocument;
+  const [mutationFx, { loading: updateLoading, error: updateError }] =
+    useMutation(UPDATE_SERVICE_DOCUMENT);
+
+  const updateFx = (dataClone: ServiceDocument) => {
+    mutationFx({
+      variables: {
+        _id: dataClone._id,
+        service: omitDeep(dataClone, ["__typename"]),
+      },
+      optimisticResponse: {
+        __typename: "Mutation",
+        updateOneService: dataClone,
+      },
+    });
   };
 
-  const modifyNestedArray = (array, value, modifyIndexes);
-
-  const handleChange = (updatedData: object, modifyIndexes: number[]) => {
-    const dataClone: QueryData = structuredClone(data);
-    const dataArray = dataClone[gqlObjectName][
-      gqlChildArrayFields[nestLevels]
-    ] as object[];
-
-    changeHandlerHelper(
-      dataArray,
-      updatedData,
-      modifyIndexes,
-      gqlChildArrayFields,
-      nestLevels
-    );
-
-    update(dataClone);
+  const renderFx = (
+    data: ServiceData,
+    onModify: (value: object) => void
+  ): JSX.Element => {
+    return <Service data={data} onModify={onModify} />;
   };
 
-  const changeHandlerHelper = (
-    dArr: any,
-    uData: object,
-    mIdxs: number[],
-    cArrFlds: string[],
-    nL: number
-  ) => {
-    switch (mIdxs.length) {
-      case 1:
-        dArr[mIdxs[0]] = uData;
-        break;
-      case 2:
-        dArr[mIdxs[1]][cArrFlds[nL - 1]][mIdxs[0]] = uData;
-        break;
-      case 3:
-        dArr[mIdxs[2]][cArrFlds[nL - 1]][mIdxs[1]][cArrFlds[nL - 2]][mIdxs[0]] =
-          uData;
-        break;
-    }
-  };
+  if (!serviceContext?.serviceDocumentId) return <LLLoadingSpinner />;
 
   if (loading || error) {
     if (error) {
@@ -78,7 +62,22 @@ const ServiceEditor = (): JSX.Element => {
       </main>
     );
 
-  return <div>{String(data.service)}</div>;
+  // TODO: Add autosave stuff
+
+  return (
+    <DraggableList
+      data={data.service}
+      nestLevels={1}
+      dataPropNames={["service", "category"]}
+      arrayPropNames={["services", "categories"]}
+      newDataFxs={[
+        serviceContext.newServiceData,
+        serviceContext.newServiceCategoryData,
+      ]}
+      updateFx={updateFx}
+      renderFx={renderFx}
+    />
+  );
 };
 
 export default ServiceEditor;

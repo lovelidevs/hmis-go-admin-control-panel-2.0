@@ -12,6 +12,7 @@ import gql from "graphql-tag";
 import { v4 as uuidv4 } from "uuid";
 
 import { AuthContext } from "../Authentication/AuthProvider";
+import { ApolloClientContext } from "./ApolloClientProvider";
 
 const LOAD_SERVICE_DOCUMENT_ID = gql`
   query LoadServiceDocumentId($organization: String!) {
@@ -55,6 +56,18 @@ export const LOAD_SERVICE_DOCUMENT = gql`
   ${serviceFragment}
 `;
 
+export const UPDATE_SERVICE_DOCUMENT = gql`
+  mutation UpdateServiceDocument(
+    $_id: ObjectId!
+    $service: ServiceUpdateInput!
+  ) {
+    updateOneService(query: { _id: $_id }, set: $service) {
+      ...Service_service
+    }
+  }
+  ${serviceFragment}
+`;
+
 export type ServiceDocument = {
   __typename?: string;
   _id: ObjectId;
@@ -69,18 +82,17 @@ type ServiceCategoryData = {
   services: ServiceData[];
 };
 
-type ServiceData = {
+export type ServiceData = {
   __typename?: string;
   uuid: string;
   service: string;
-  inputType: string;
+  inputType: "Toggle" | "Counter" | "Textbox" | "Locations" | "Custom List";
   units?: string;
   customList?: string[];
 };
 
 type ServiceContextType = {
   serviceDocumentId: ObjectId | null;
-  updateServiceDocument: (serviceDocument: ServiceDocument) => void;
   newServiceData: () => ServiceData;
   newServiceCategoryData: () => ServiceCategoryData;
 };
@@ -95,6 +107,7 @@ const ServiceProvider = ({
   children: ReactNode;
 }): JSX.Element => {
   const authContext = useContext(AuthContext);
+  const apolloClientContext = useContext(ApolloClientContext);
 
   const [serviceDocumentId, setServiceDocumentId] = useState<ObjectId | null>(
     null
@@ -108,6 +121,8 @@ const ServiceProvider = ({
       uuid: uuidv4(),
       service: "",
       inputType: "Toggle",
+      units: "",
+      customList: [""],
     };
   }, []);
 
@@ -122,6 +137,7 @@ const ServiceProvider = ({
   useEffect(() => {
     if (!authContext?.user) return setServiceDocumentId(null);
     if (!authContext.userData?.organization) return setServiceDocumentId(null);
+    if (!apolloClientContext?.client) return setServiceDocumentId(null);
 
     loadServiceDocumentId({
       variables: { organization: authContext.userData.organization },
@@ -154,20 +170,16 @@ const ServiceProvider = ({
   }, [
     authContext?.user,
     authContext?.userData?.organization,
+    apolloClientContext?.client,
     loadServiceDocumentId,
     insertServiceDocument,
     newServiceCategoryData,
   ]);
 
-  const updateServiceDocument = (serviceDocument: ServiceDocument) => {
-    // TODO
-  };
-
   return (
     <ServiceContext.Provider
       value={{
         serviceDocumentId,
-        updateServiceDocument,
         newServiceData,
         newServiceCategoryData,
       }}

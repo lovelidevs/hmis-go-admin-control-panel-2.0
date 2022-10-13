@@ -1,4 +1,10 @@
-import { ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 import {
   ApolloClient,
@@ -15,7 +21,14 @@ const GQL_URI = `https://us-east-1.aws.realm.mongodb.com/api/client/v2.0/app/${
   process.env.REACT_APP_REALM_APP_ID as string
 }/graphql`;
 
-const ApolloClientProvicer = ({ children }: { children: ReactNode }) => {
+type ApolloClientContextType = {
+  client: ApolloClient<NormalizedCacheObject>;
+};
+
+export const ApolloClientContext =
+  React.createContext<ApolloClientContextType | null>(null);
+
+const ApolloClientProvider = ({ children }: { children: ReactNode }) => {
   const authContext = useContext(AuthContext);
 
   const createApolloClient = useCallback((user?: Realm.User | null) => {
@@ -47,7 +60,13 @@ const ApolloClientProvicer = ({ children }: { children: ReactNode }) => {
     setClient(createApolloClient(authContext?.user));
   }, [authContext?.user, createApolloClient]);
 
-  return <ApolloProvider client={client}>{children}</ApolloProvider>;
+  return (
+    <ApolloProvider client={client}>
+      <ApolloClientContext.Provider value={{ client }}>
+        {children}
+      </ApolloClientContext.Provider>
+    </ApolloProvider>
+  );
 };
 
-export default ApolloClientProvicer;
+export default ApolloClientProvider;

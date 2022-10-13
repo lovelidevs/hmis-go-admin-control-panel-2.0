@@ -1,13 +1,13 @@
 import { ReactNode } from "react";
 
-import ApolloClientProvicer from "./ApolloClientProvider";
+import ApolloClientProvider from "./ApolloClientProvider";
 import ServiceProvider from "./ServiceProvider";
 
 const APIProvider = ({ children }: { children: ReactNode }): JSX.Element => {
   return (
-    <ApolloClientProvicer>
+    <ApolloClientProvider>
       <ServiceProvider>{children}</ServiceProvider>
-    </ApolloClientProvicer>
+    </ApolloClientProvider>
   );
 };
 
