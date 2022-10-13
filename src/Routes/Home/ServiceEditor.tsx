@@ -12,6 +12,7 @@ import {
 } from "../../API/ServiceProvider";
 import DraggableList from "../../DraggableList/DraggableList";
 import Service from "../../DraggableList/Service";
+import LLAutosaveStatusBar from "../../LLComponents/LLAutosaveStatusBar";
 import LLLoadingSpinner from "../../LLComponents/LLLoadingSpinner";
 
 const ServiceEditor = (): JSX.Element => {
@@ -65,18 +66,24 @@ const ServiceEditor = (): JSX.Element => {
   // TODO: Add autosave stuff
 
   return (
-    <DraggableList
-      data={data.service}
-      nestLevels={1}
-      dataPropNames={["service", "category"]}
-      arrayPropNames={["services", "categories"]}
-      newDataFxs={[
-        serviceContext.newServiceData,
-        serviceContext.newServiceCategoryData,
-      ]}
-      updateFx={updateFx}
-      renderFx={renderFx}
-    />
+    <main className="flex flex-col flex-nowrap justify-start items-center space-y-4 my-4">
+      <LLAutosaveStatusBar
+        updateLoading={updateLoading}
+        updateError={updateError}
+      />
+      <DraggableList
+        data={data.service}
+        nestLevels={1}
+        dataPropNames={["service", "category"]}
+        arrayPropNames={["services", "categories"]}
+        newDataFxs={[
+          serviceContext.newServiceData,
+          serviceContext.newServiceCategoryData,
+        ]}
+        updateFx={updateFx}
+        renderFx={renderFx}
+      />
+    </main>
   );
 };
 

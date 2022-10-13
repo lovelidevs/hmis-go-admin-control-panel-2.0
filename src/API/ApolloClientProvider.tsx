@@ -22,7 +22,7 @@ const GQL_URI = `https://us-east-1.aws.realm.mongodb.com/api/client/v2.0/app/${
 }/graphql`;
 
 type ApolloClientContextType = {
-  client: ApolloClient<NormalizedCacheObject>;
+  client: ApolloClient<NormalizedCacheObject> | null;
 };
 
 export const ApolloClientContext =
@@ -32,6 +32,8 @@ const ApolloClientProvider = ({ children }: { children: ReactNode }) => {
   const authContext = useContext(AuthContext);
 
   const createApolloClient = useCallback((user?: Realm.User | null) => {
+    if (!user) return null;
+
     return new ApolloClient({
       link: new HttpLink({
         uri: GQL_URI,
@@ -52,20 +54,26 @@ const ApolloClientProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
-  const [client, setClient] = useState<ApolloClient<NormalizedCacheObject>>(
-    createApolloClient(authContext?.user)
-  );
+  const [client, setClient] =
+    useState<ApolloClient<NormalizedCacheObject> | null>(
+      createApolloClient(authContext?.user)
+    );
 
   useEffect(() => {
     setClient(createApolloClient(authContext?.user));
   }, [authContext?.user, createApolloClient]);
 
-  return (
-    <ApolloProvider client={client}>
+  if (!client)
+    return (
       <ApolloClientContext.Provider value={{ client }}>
         {children}
       </ApolloClientContext.Provider>
-    </ApolloProvider>
+    );
+
+  return (
+    <ApolloClientContext.Provider value={{ client }}>
+      <ApolloProvider client={client}>{children}</ApolloProvider>
+    </ApolloClientContext.Provider>
   );
 };
 

@@ -191,8 +191,8 @@ const DraggableListElement = ({
       >
         <div
           ref={dragImage}
-          className={`flex flex-col flex-nowrap justify-start items-stretch rounded-lg space-y-2 p-2 ml-2 ${
-            nestLevel === 0 && "bg-stone-100 mb-2"
+          className={`flex flex-col flex-nowrap justify-start items-stretch rounded-lg space-y-2 p-2 ml-2 mb-2 ${
+            nestLevel === 0 && "bg-stone-100"
           }`}
         >
           <DragBar
