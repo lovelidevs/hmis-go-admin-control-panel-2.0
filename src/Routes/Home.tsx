@@ -19,6 +19,7 @@ const Home = (): JSX.Element => {
           <LLNavLink to="reports">Reports</LLNavLink>
           <LLNavLink to="services">Services</LLNavLink>
           <LLNavLink to="locations">Locations</LLNavLink>
+          <LLNavLink to="clients">Clients</LLNavLink>
         </nav>
         <LLButton type="button" onClick={authContext?.logOut}>
           Log Out

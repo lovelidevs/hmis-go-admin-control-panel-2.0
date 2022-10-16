@@ -7,6 +7,7 @@ const DragBar = ({
   onDragLeave,
   onDragOver,
   onDrop,
+  twStyle,
 }: {
   onDragStart: DragEventHandler<HTMLDivElement>;
   onDragEnd: DragEventHandler<HTMLDivElement>;
@@ -14,10 +15,11 @@ const DragBar = ({
   onDragLeave: DragEventHandler<HTMLDivElement>;
   onDragOver: DragEventHandler<HTMLDivElement>;
   onDrop: DragEventHandler<HTMLDivElement>;
+  twStyle?: string;
 }) => {
   return (
     <div
-      className="flex flex-row flex-nowrap justify-center items-center hover:cursor-move opacity-0 hover:opacity-100"
+      className={`${twStyle} flex flex-row flex-nowrap justify-center items-center hover:cursor-move opacity-0 hover:opacity-100`}
       draggable={true}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}

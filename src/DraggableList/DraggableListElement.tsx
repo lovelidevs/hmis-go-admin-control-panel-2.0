@@ -220,6 +220,7 @@ const DraggableListElement = ({
             onDragLeave={handleDragLeave}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
+            twStyle={nestLevel === 2 ? "text-white" : ""}
           />
           {nestLevel > 0 && (
             <LLDebouncedInput
