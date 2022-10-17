@@ -103,6 +103,16 @@ type LocationContextType = {
   newLocationData: () => LocationData;
   newLocationCategoryData: () => LocationCategoryData;
   newLocationCityData: () => LocationCityData;
+  getCities: (locationDocument: LocationDocument) => string[];
+  getLocationCategories: (
+    locationDocument: LocationDocument,
+    city: string
+  ) => string[];
+  getLocations: (
+    locationDocument: LocationDocument,
+    city: string,
+    locationCategory: string
+  ) => string[];
 };
 
 export const LocationContext = React.createContext<LocationContextType | null>(
@@ -190,6 +200,72 @@ const LocationProvider = ({
     newLocationCityData,
   ]);
 
+  const getCities = useCallback(
+    (locationDocument: LocationDocument): string[] => {
+      if (!locationDocument) return [];
+
+      const cities: string[] = [];
+
+      for (const city of locationDocument.cities) {
+        cities.push(city.city);
+      }
+
+      return cities;
+    },
+    []
+  );
+
+  const getLocationCategories = useCallback(
+    (locationDocument: LocationDocument, city: string): string[] => {
+      if (!locationDocument) return [];
+
+      const categories: string[] = [];
+
+      const categoryObjs = locationDocument.cities.find(
+        (cityObj) => cityObj.city === city
+      )?.categories;
+
+      if (!categoryObjs) return [];
+
+      for (const category of categoryObjs) {
+        categories.push(category.category);
+      }
+
+      return categories;
+    },
+    []
+  );
+
+  const getLocations = useCallback(
+    (
+      locationDocument: LocationDocument,
+      city: string,
+      locationCategory: string
+    ): string[] => {
+      if (!locationDocument) return [];
+
+      const locations: string[] = [];
+
+      const locationObjs = locationDocument.cities
+        .find((cityObj) => cityObj.city === city)
+        ?.categories.find(
+          (category) => category.category === locationCategory
+        )?.locations;
+
+      if (!locationObjs) return [];
+
+      for (const location of locationObjs) {
+        locations.push(location.location);
+        if (!location.places) continue;
+        for (const place of location.places)
+          locations.push(location.location + ": " + place);
+      }
+
+      return locations;
+    },
+    []
+  );
+
   return (
     <LocationContext.Provider
       value={{
@@ -197,6 +273,9 @@ const LocationProvider = ({
         newLocationData,
         newLocationCategoryData,
         newLocationCityData,
+        getCities,
+        getLocationCategories,
+        getLocations,
       }}
     >
       {children}

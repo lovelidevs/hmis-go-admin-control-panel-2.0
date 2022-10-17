@@ -20,13 +20,20 @@ const CLIENT_PROFILE_FRAGMENT = gql`
 
 const SERVICE_HISTORY_FRAGMENT = gql`
   fragment Client_serviceHistory on Client {
-    _id
-    organization
-    lastName
-    firstName
-    DOB
-    alias
-    hmisID
+    serviceHistory {
+      date
+      time
+      city
+      locationCategory
+      location
+      services {
+        service
+        text
+        count
+        units
+        list
+      }
+    }
   }
 `;
 
@@ -115,6 +122,8 @@ type ClientContextType = {
   insertClient: (clientClone: Client) => Promise<void>;
   clientKey: (client: Client) => string;
   clientProfileToString: (client: Client) => string;
+  servicesToString: (services: ClientService[] | null) => string;
+  serviceToString: (service: ClientService) => string;
 };
 
 export const ClientContext = React.createContext<ClientContextType | null>(
@@ -227,6 +236,29 @@ const ClientProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     return string;
   };
 
+  const servicesToString = (services: ClientService[] | null): string => {
+    if (!services) return "";
+
+    let result: string[] = [];
+
+    for (const service of services) result.push(serviceToString(service));
+
+    return result.join(", ");
+  };
+
+  const serviceToString = (service: ClientService): string => {
+    let string = service.service;
+
+    if (service.text) string += " (" + service.text + ")";
+
+    if (service.count && service.units)
+      string += ` (${service.count} ${service.units})`;
+
+    if (service.list) string += " (" + service.list.join(", ") + ")";
+
+    return string;
+  };
+
   return (
     <ClientContext.Provider
       value={{
@@ -236,6 +268,8 @@ const ClientProvider = ({ children }: { children: ReactNode }): JSX.Element => {
         insertClient,
         clientKey,
         clientProfileToString,
+        servicesToString,
+        serviceToString,
       }}
     >
       {children}

@@ -11,6 +11,7 @@ import {
   UPDATE_CLIENT,
 } from "../../API/ClientProvider";
 import ClientProfile from "../../ClientSearch/ClientProfile";
+import ServiceHistory from "../../ClientSearch/ServiceHistory/ServiceHistory";
 import LLButton from "../../LLComponents/LLButton";
 import LLDebouncedInput from "../../LLComponents/LLDebouncedInput";
 import LLLoadingSpinner from "../../LLComponents/LLLoadingSpinner";
@@ -118,11 +119,12 @@ const ClientSearch = (): JSX.Element => {
           )}
         </div>
         {data?.client && (
-          <div className="flex flex-row flex-wrap justify-center items-start space-x-4">
+          <div className="flex flex-row flex-wrap justify-center items-start space-x-4 space-y-4">
             <ClientProfile
               client={data.client}
               onSave={(clientClone: Client) => handleUpdateClient(clientClone)}
             />
+            <ServiceHistory client={data.client} />
           </div>
         )}
       </main>
