@@ -34,7 +34,7 @@ const Service = ({
         <LLDebouncedInput
           type="text"
           value={data.units ? data.units : ""}
-          onChange={(value) => handleModify({ unites: value })}
+          onChange={(value) => handleModify({ units: value })}
           placeholder="units"
           twStyle="text-base"
         />
