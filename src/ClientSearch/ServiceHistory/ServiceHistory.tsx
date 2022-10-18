@@ -108,71 +108,73 @@ const ServiceHistory = ({ client }: { client: Client }) => {
   if (error) return <p>{String(error)}</p>;
 
   return (
-    <div className="flex flex-col flex-nowrap justify-start items-stretch space-y-4">
-      <div className="flex flex-row flex-nowrap justify-between items-center bg-gray-300 rounded-lg p-2">
-        {disabled ? (
-          <LLButton type="button" twStyle="invisible">
-            Edit
-          </LLButton>
-        ) : (
-          <LLButton type="button" onClick={handleSave}>
-            Save
-          </LLButton>
-        )}
-        <h2 className="text-xl font-bold">Service History</h2>
-        {disabled ? (
-          <LLButton type="button" onClick={() => setDisabled(false)}>
-            Edit
-          </LLButton>
-        ) : (
-          <LLButton type="button" onClick={handleCancel}>
-            Cancel
-          </LLButton>
-        )}
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Location</th>
-            <th>Services</th>
-          </tr>
-        </thead>
-        <tbody ref={tableBody}>
-          {clientSH.serviceHistory?.map((contact, index) => (
-            <tr key={trKey(contact, index)}>
-              <td>
-                <SHDate defaultValue={contact.date} disabled={disabled} />
-              </td>
-              <td>
-                <SHTime
-                  defaultValue={contact.time ? contact.time : ""}
-                  disabled={disabled}
-                />
-              </td>
-              <td>
-                <SHLocation
-                  locationDocument={data.location}
-                  defaultCity={contact.city ? contact.city : ""}
-                  defaultLocationCategory={
-                    contact.locationCategory ? contact.locationCategory : ""
-                  }
-                  defaultLocation={contact.location ? contact.location : ""}
-                  disabled={disabled}
-                />
-              </td>
-              <td>
-                <SHServices
-                  defaultServices={contact.services ? contact.services : []}
-                  disabled={disabled}
-                />
-              </td>
+    <>
+      <div className="flex flex-col flex-nowrap justify-start items-stretch space-y-4">
+        <div className="flex flex-row flex-nowrap justify-between items-center bg-gray-300 rounded-lg p-2">
+          {disabled ? (
+            <LLButton type="button" twStyle="invisible">
+              Edit
+            </LLButton>
+          ) : (
+            <LLButton type="button" onClick={handleSave}>
+              Save
+            </LLButton>
+          )}
+          <h2 className="text-xl font-bold">Service History</h2>
+          {disabled ? (
+            <LLButton type="button" onClick={() => setDisabled(false)}>
+              Edit
+            </LLButton>
+          ) : (
+            <LLButton type="button" onClick={handleCancel}>
+              Cancel
+            </LLButton>
+          )}
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Location</th>
+              <th>Services</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody ref={tableBody}>
+            {clientSH.serviceHistory?.map((contact, index) => (
+              <tr key={trKey(contact, index)}>
+                <td>
+                  <SHDate defaultValue={contact.date} disabled={disabled} />
+                </td>
+                <td>
+                  <SHTime
+                    defaultValue={contact.time ? contact.time : ""}
+                    disabled={disabled}
+                  />
+                </td>
+                <td>
+                  <SHLocation
+                    locationDocument={data.location}
+                    defaultCity={contact.city ? contact.city : ""}
+                    defaultLocationCategory={
+                      contact.locationCategory ? contact.locationCategory : ""
+                    }
+                    defaultLocation={contact.location ? contact.location : ""}
+                    disabled={disabled}
+                  />
+                </td>
+                <td>
+                  <SHServices
+                    defaultServices={contact.services ? contact.services : []}
+                    disabled={disabled}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 };
 

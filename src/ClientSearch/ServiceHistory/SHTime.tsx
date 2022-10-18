@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
 
 const SHTime = ({
   defaultValue,
@@ -9,15 +12,25 @@ const SHTime = ({
   defaultValue: string;
   disabled: boolean;
 }) => {
-  const [value, setValue] = useState<string>(
-    dayjs(defaultValue).local().format("HH:mm")
-  );
+  const convertDefaultValue = useCallback((value: string) => {
+    if (!value) return "";
+    else return dayjs(value).local().format("HH:mm");
+  }, []);
+
+  const [value, setValue] = useState<string>(convertDefaultValue(defaultValue));
 
   useEffect(() => {
-    setValue(dayjs(defaultValue).local().format("HH:mm"));
-  }, [defaultValue]);
+    setValue(convertDefaultValue(defaultValue));
+  }, [defaultValue, convertDefaultValue]);
 
-  if (disabled) return <p className="whitespace-nowrap">{value}</p>;
+  if (disabled) {
+    console.log(value);
+    return (
+      <p className="whitespace-nowrap">
+        {value ? dayjs(value, "HH:mm").format("h:mm A") : "-"}
+      </p>
+    );
+  }
 
   return (
     <input

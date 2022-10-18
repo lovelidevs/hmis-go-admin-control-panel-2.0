@@ -30,20 +30,25 @@ const SHServices = ({
 
   if (services.length === 0)
     return (
-      <div data-length={0} className="text-center">
-        -
+      <div className="flex flex-row row-nowrap justify-center items-center">
+        <div
+          data-length={0}
+          className="text-center bg-white hover:cursor-pointer py-1 px-8 border border-gray-800 rounded-lg"
+        >
+          -
+        </div>
       </div>
     );
 
   return (
     <div
       data-length={services.length}
-      className="flex flex-row flex-wrap justify-start items-baseline"
+      className="flex flex-row flex-wrap justify-start items-baseline space-x-1 space-y-1"
     >
       {services.map((service) => (
         <p
           key={service.service}
-          className="bg-white hover:cursor-pointer border border-gray-800 rounded-lg"
+          className="bg-white hover:cursor-pointer border border-gray-800 rounded-lg p-1"
         >
           {clientContext.serviceToString(service)}
         </p>
