@@ -24,7 +24,6 @@ const SHTime = ({
   }, [defaultValue, convertDefaultValue]);
 
   if (disabled) {
-    console.log(value);
     return (
       <p className="whitespace-nowrap">
         {value ? dayjs(value, "HH:mm").format("h:mm A") : "-"}

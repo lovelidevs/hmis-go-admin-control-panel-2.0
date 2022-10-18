@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 import { useMutation, useQuery } from "@apollo/client";
 import omitDeep from "omit-deep-lodash";
@@ -18,9 +18,13 @@ import LLLoadingSpinner from "../../LLComponents/LLLoadingSpinner";
 const LocationEditor = (): JSX.Element => {
   const locationContext = useContext(LocationContext);
 
-  const { loading, error, data } = useQuery(LOAD_LOCATION_DOCUMENT, {
+  const { loading, error, data, refetch } = useQuery(LOAD_LOCATION_DOCUMENT, {
     variables: { _id: locationContext?.locationDocumentId },
   });
+
+  useEffect(() => {
+    if (locationContext?.locationDocumentId) refetch();
+  }, [locationContext?.locationDocumentId, refetch]);
 
   const [mutationFx, { loading: updateLoading, error: updateError }] =
     useMutation(UPDATE_LOCATION_DOCUMENT);

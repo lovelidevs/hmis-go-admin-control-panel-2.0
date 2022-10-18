@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 import { useMutation, useQuery } from "@apollo/client";
 import omitDeep from "omit-deep-lodash";
@@ -18,9 +18,13 @@ import LLLoadingSpinner from "../../LLComponents/LLLoadingSpinner";
 const ServiceEditor = (): JSX.Element => {
   const serviceContext = useContext(ServiceContext);
 
-  const { loading, error, data } = useQuery(LOAD_SERVICE_DOCUMENT, {
+  const { loading, error, data, refetch } = useQuery(LOAD_SERVICE_DOCUMENT, {
     variables: { _id: serviceContext?.serviceDocumentId },
   });
+
+  useEffect(() => {
+    if (serviceContext?.serviceDocumentId) refetch();
+  }, [serviceContext?.serviceDocumentId, refetch]);
 
   const [mutationFx, { loading: updateLoading, error: updateError }] =
     useMutation(UPDATE_SERVICE_DOCUMENT);
