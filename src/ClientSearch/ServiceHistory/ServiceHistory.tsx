@@ -20,6 +20,7 @@ import {
 } from "../../API/ServiceProvider";
 import LLButton from "../../LLComponents/LLButton";
 import LLLoadingSpinner from "../../LLComponents/LLLoadingSpinner";
+import LLDeleteButton from "../../LLComponents/LLMenuButtons/LLDeleteButton";
 import LLMenuButtons from "../../LLComponents/LLMenuButtons/LLMenuButtons";
 import SHDate from "./SHDate";
 import SHLocation from "./SHLocation";
@@ -165,12 +166,12 @@ const ServiceHistory = ({
     return services;
   };
 
-  const handleAdd = (index: number) => {
+  const handleAdd = () => {
     const clientClone = structuredClone(clientSH) as Client;
 
     if (!clientClone.serviceHistory) clientClone.serviceHistory = [];
 
-    clientClone.serviceHistory?.splice(index, 0, {
+    clientClone.serviceHistory?.splice(0, 0, {
       date: dayjs().format("YYYY-MM-DD"),
       time: null,
       city: null,
@@ -186,8 +187,6 @@ const ServiceHistory = ({
     clientClone.serviceHistory?.splice(index, 1);
     setClientSH(clientClone);
   };
-
-  // TODO: Make wifey's change: move the add button and just use delete
 
   const handleCancel = () => {
     setDisabled(true);
@@ -232,9 +231,14 @@ const ServiceHistory = ({
               Edit
             </LLButton>
           ) : (
-            <LLButton type="button" onClick={handleCancel}>
-              Cancel
-            </LLButton>
+            <div className="flex flex-row flex-nowrap justify-center items-center space-x-2">
+              <LLButton type="button" onClick={handleAdd}>
+                Add
+              </LLButton>
+              <LLButton type="button" onClick={handleCancel}>
+                Cancel
+              </LLButton>
+            </div>
           )}
         </div>
         <table className="border-collapse">
@@ -265,7 +269,7 @@ const ServiceHistory = ({
                       height={"h-6"}
                       visibility={"visible"}
                       twStyle={"bg-gray-300"}
-                      onAdd={() => handleAdd(0)}
+                      onAdd={() => handleAdd()}
                       onRemove={() => console.log("Nothing to delete")}
                       horizontal={true}
                     />
@@ -277,14 +281,10 @@ const ServiceHistory = ({
               <tr key={trKey(contact, index)}>
                 {!disabled && (
                   <td className="p-1">
-                    <LLMenuButtons
+                    <LLDeleteButton
                       width={"w-6"}
                       height={"h-6"}
-                      visibility={"visible"}
-                      twStyle={"bg-gray-300"}
-                      onAdd={() => handleAdd(index)}
-                      onRemove={() => handleDelete(index)}
-                      horizontal={true}
+                      onClick={() => handleDelete(index)}
                     />
                   </td>
                 )}
