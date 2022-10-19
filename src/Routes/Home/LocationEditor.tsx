@@ -123,6 +123,9 @@ const LocationEditor = (): JSX.Element => {
             />
           </svg>
         }
+        customButtonYesNoQuestion={
+          "Are you sure you want to delete these places?"
+        }
       />
     </main>
   );

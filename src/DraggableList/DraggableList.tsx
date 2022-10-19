@@ -14,8 +14,7 @@ import {
 // TODO: Still need to implement the focusing stuff, from Service and Location, actually ALL levels, just search focus
 
 // TODO: Implement warning dialogue for delete and custom Button
-// TODO: We'll need another prop that is customButtonDialogMessage
-// TODO: Still need to fix places
+// TODO: We'll need another prop that is customButtonYesNoQuestion
 // TODO: Fix the issue with servicelistId
 
 const DraggableList = ({
@@ -28,6 +27,7 @@ const DraggableList = ({
   renderFx,
   customButtonStatusInitFx,
   customButton,
+  customButtonYesNoQuestion,
 }: {
   data: any;
   nestLevels: number;
@@ -42,6 +42,7 @@ const DraggableList = ({
   ) => JSX.Element;
   customButtonStatusInitFx?: (data: any, nestLevel: number) => boolean;
   customButton?: ReactNode;
+  customButtonYesNoQuestion?: string;
 }): JSX.Element => {
   const [dragItemIndexes, setDragItemIndexes] = useState<number[]>([]);
   const [activeIndexes, setActiveIndexes] = useState<number[]>([]);
@@ -177,6 +178,9 @@ const DraggableList = ({
             dragItemIndexes={filterIndexes(dragItemIndexes, index)}
             activeIndexes={filterIndexes(activeIndexes, index)}
             renderFx={renderFx}
+            customButtonStatusInitFx={customButtonStatusInitFx}
+            customButton={customButton}
+            customButtonYesNoQuestion={customButtonYesNoQuestion}
             onModify={handleModify}
             onAdd={handleAdd}
             onRemove={handleRemove}
