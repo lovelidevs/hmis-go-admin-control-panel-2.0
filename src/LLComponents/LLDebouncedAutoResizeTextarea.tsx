@@ -7,12 +7,14 @@ const LLDebouncedAutoResizeTextarea = ({
   onChange,
   placeholder,
   cols,
+  autoFocus,
   twStyle,
 }: {
   value: string[];
   onChange: (value: string[]) => void;
   placeholder?: string;
   cols?: number;
+  autoFocus?: boolean;
   twStyle?: string;
 }) => {
   const [optimisticValue, setOptimisticValue] = useState<string>(
@@ -53,6 +55,7 @@ const LLDebouncedAutoResizeTextarea = ({
         debouncedOnChange(event.target.value, onChange);
       }}
       cols={cols}
+      autoFocus={autoFocus}
     />
   );
 };

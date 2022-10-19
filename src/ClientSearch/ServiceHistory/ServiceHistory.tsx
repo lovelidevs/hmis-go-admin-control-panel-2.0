@@ -194,6 +194,7 @@ const ServiceHistory = ({ client }: { client: Client }) => {
               <td>
                 <SHServices
                   serviceDocument={serviceData.service}
+                  locationDocument={locationData.location}
                   defaultServices={contact.services ? contact.services : []}
                   disabled={disabled}
                 />

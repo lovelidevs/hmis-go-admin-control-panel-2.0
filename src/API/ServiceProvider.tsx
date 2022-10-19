@@ -75,7 +75,7 @@ export type ServiceDocument = {
   categories: ServiceCategoryData[];
 };
 
-type ServiceCategoryData = {
+export type ServiceCategoryData = {
   __typename?: string;
   uuid: string;
   category: string;

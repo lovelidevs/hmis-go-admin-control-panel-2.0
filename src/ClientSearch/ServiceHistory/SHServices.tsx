@@ -1,15 +1,18 @@
 import { useContext, useEffect, useRef, useState } from "react";
 
 import { ClientContext, ClientService } from "../../API/ClientProvider";
+import { LocationDocument } from "../../API/LocationProvider";
 import { ServiceContext, ServiceDocument } from "../../API/ServiceProvider";
 import SHServiceEditor from "./SHServiceEditor/SHServiceEditor";
 
 const SHServices = ({
   serviceDocument,
+  locationDocument,
   defaultServices,
   disabled,
 }: {
   serviceDocument: ServiceDocument;
+  locationDocument: LocationDocument;
   defaultServices: ClientService[];
   disabled: boolean;
 }) => {
@@ -23,6 +26,9 @@ const SHServices = ({
   useEffect(() => {
     setServices(defaultServices);
   }, [defaultServices]);
+
+  const handleChange = (servicesClone: ClientService[]) =>
+    setServices(servicesClone);
 
   if (!clientContext || !serviceContext) return <p>Loading...</p>;
 
@@ -48,7 +54,13 @@ const SHServices = ({
             -
           </p>
         </div>
-        <SHServiceEditor ref={serviceEditor} services={services} />
+        <SHServiceEditor
+          ref={serviceEditor}
+          locationDocument={locationDocument}
+          serviceDocument={serviceDocument}
+          services={services}
+          onChange={handleChange}
+        />
       </>
     );
 
@@ -76,7 +88,13 @@ const SHServices = ({
           </p>
         ))}
       </div>
-      <SHServiceEditor ref={serviceEditor} services={services} />
+      <SHServiceEditor
+        ref={serviceEditor}
+        serviceDocument={serviceDocument}
+        locationDocument={locationDocument}
+        services={services}
+        onChange={handleChange}
+      />
     </>
   );
 };

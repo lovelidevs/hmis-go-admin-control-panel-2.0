@@ -113,6 +113,7 @@ type LocationContextType = {
     city: string,
     locationCategory: string
   ) => string[];
+  getAllLocations: (locationDocument: LocationDocument) => string[];
 };
 
 export const LocationContext = React.createContext<LocationContextType | null>(
@@ -130,6 +131,8 @@ const LocationProvider = ({
   const [locationDocumentId, setLocationDocumentId] = useState<ObjectId | null>(
     null
   );
+
+  const [retry, setRetry] = useState<boolean>(true);
 
   const [loadLocationDocumentId] = useLazyQuery(LOAD_LOCATION_DOCUMENT_ID);
   const [insertLocationDocument] = useMutation(INSERT_LOCATION_DOCUMENT);
@@ -158,7 +161,7 @@ const LocationProvider = ({
     };
   }, [newLocationCategoryData]);
 
-  useEffect(() => {
+  const initLocationDocumentId = useCallback(() => {
     if (!authContext?.user) return setLocationDocumentId(null);
     if (!authContext.userData?.organization) return setLocationDocumentId(null);
     if (!apolloClientContext?.client) return setLocationDocumentId(null);
@@ -189,16 +192,26 @@ const LocationProvider = ({
       onError: (error) => {
         console.log("Error loading location document _id:");
         console.log(error);
+        if (retry) {
+          console.log("Retrying to load location document _id");
+          setRetry(false);
+          loadLocationDocumentId();
+        }
       },
     });
   }, [
+    apolloClientContext?.client,
     authContext?.user,
     authContext?.userData?.organization,
-    apolloClientContext?.client,
-    loadLocationDocumentId,
     insertLocationDocument,
+    loadLocationDocumentId,
     newLocationCityData,
+    retry,
   ]);
+
+  useEffect(() => {
+    initLocationDocumentId();
+  }, [initLocationDocumentId]);
 
   const getCities = useCallback(
     (locationDocument: LocationDocument): string[] => {
@@ -244,8 +257,6 @@ const LocationProvider = ({
     ): string[] => {
       if (!locationDocument) return [];
 
-      const locations: string[] = [];
-
       const locationObjs = locationDocument.cities
         .find((cityObj) => cityObj.city === city)
         ?.categories.find(
@@ -253,6 +264,8 @@ const LocationProvider = ({
         )?.locations;
 
       if (!locationObjs) return [];
+
+      const locations: string[] = [];
 
       for (const location of locationObjs) {
         locations.push(location.location);
@@ -266,6 +279,30 @@ const LocationProvider = ({
     []
   );
 
+  const getAllLocations = useCallback(
+    (locationDocument: LocationDocument): string[] => {
+      if (!locationDocument) return [];
+
+      const locations: string[] = [];
+
+      const cities = getCities(locationDocument);
+      for (let city of cities) {
+        const categories = getLocationCategories(locationDocument, city);
+        for (let locationCategory of categories) {
+          for (let location of getLocations(
+            locationDocument,
+            city,
+            locationCategory
+          ))
+            locations.push(location);
+        }
+      }
+
+      return locations;
+    },
+    [getCities, getLocationCategories, getLocations]
+  );
+
   return (
     <LocationContext.Provider
       value={{
@@ -276,6 +313,7 @@ const LocationProvider = ({
         getCities,
         getLocationCategories,
         getLocations,
+        getAllLocations,
       }}
     >
       {children}
