@@ -63,7 +63,7 @@ const SHLocation = ({
     <>
       <p
         className={
-          "text-center bg-white hover:cursor-pointer border border-gray-800 rounded-lg p-1"
+          "text-center whitespace-nowrap bg-white hover:cursor-pointer border border-gray-800 rounded-lg p-1"
         }
         data-city={city}
         data-locationcategory={locationCategory}

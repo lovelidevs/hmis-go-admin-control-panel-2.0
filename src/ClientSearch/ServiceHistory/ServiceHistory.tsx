@@ -20,6 +20,7 @@ import {
 } from "../../API/ServiceProvider";
 import LLButton from "../../LLComponents/LLButton";
 import LLLoadingSpinner from "../../LLComponents/LLLoadingSpinner";
+import LLMenuButtons from "../../LLComponents/LLMenuButtons/LLMenuButtons";
 import SHDate from "./SHDate";
 import SHLocation from "./SHLocation";
 import SHServices from "./SHServices";
@@ -42,6 +43,10 @@ const ServiceHistory = ({
   const [disabled, setDisabled] = useState<boolean>(true);
 
   const tableBody = useRef<HTMLTableSectionElement>(null);
+
+  useEffect(() => {
+    setClientSH(client);
+  }, [client]);
 
   const {
     loading: servicesLoading,
@@ -81,21 +86,23 @@ const ServiceHistory = ({
     const serviceHistory: ClientContact[] = [];
 
     for (let tr of tableBody.current.children) {
+      if (tr.children.length === 1) continue;
+
       const date = handleDate(
-        tr.children[0].firstElementChild as HTMLInputElement
+        tr.children[1].firstElementChild as HTMLInputElement
       );
 
       const time = handleTime(
-        tr.children[1].firstElementChild as HTMLInputElement,
+        tr.children[2].firstElementChild as HTMLInputElement,
         date
       );
 
       const { city, locationCategory, location } = handleLocation(
-        tr.children[2].firstElementChild as HTMLParagraphElement
+        tr.children[3].firstElementChild as HTMLParagraphElement
       );
 
       const services: ClientService[] | null = handleServices(
-        tr.children[3].firstElementChild as HTMLDivElement
+        tr.children[4].firstElementChild as HTMLDivElement
       );
 
       serviceHistory.push({
@@ -115,11 +122,11 @@ const ServiceHistory = ({
     setDisabled(true);
   };
 
-  const handleDate = (input: HTMLInputElement) => input.value;
+  const handleDate = (input: HTMLInputElement): string => input.value;
 
   const handleTime = (input: HTMLInputElement, date: string) => {
     const time = input.value;
-    if (!date || !time) return "";
+    if (!date || !time) return null;
 
     return dayjs(date + " " + time, "YYYY-MM-DD HH:mm")
       .utc()
@@ -146,7 +153,6 @@ const ServiceHistory = ({
     const services: ClientService[] = [];
     for (const child of element.children) {
       const p = child as HTMLParagraphElement;
-      console.log(p.dataset.list);
       services.push({
         service: p.dataset.service!,
         text: p.dataset.text ? p.dataset.text : null,
@@ -159,9 +165,27 @@ const ServiceHistory = ({
     return services;
   };
 
-  // TODO: Sort correctly
-  // TODO: add button, delete button
-  // TODO: Stuff on papers
+  const handleAdd = (index: number) => {
+    const clientClone = structuredClone(clientSH) as Client;
+
+    if (!clientClone.serviceHistory) clientClone.serviceHistory = [];
+
+    clientClone.serviceHistory?.splice(index, 0, {
+      date: dayjs().format("YYYY-MM-DD"),
+      time: null,
+      city: null,
+      locationCategory: null,
+      location: null,
+      services: null,
+    });
+    setClientSH(clientClone);
+  };
+
+  const handleDelete = (index: number) => {
+    const clientClone = structuredClone(clientSH) as Client;
+    clientClone.serviceHistory?.splice(index, 1);
+    setClientSH(clientClone);
+  };
 
   const handleCancel = () => {
     setDisabled(true);
@@ -173,74 +197,129 @@ const ServiceHistory = ({
   if (servicesError) return <p>{String(servicesError)}</p>;
   if (locationsError) return <p>{String(locationsError)}</p>;
 
+  const serviceHistory = structuredClone(clientSH.serviceHistory) as
+    | ClientContact[]
+    | null;
+
+  serviceHistory?.sort((a, b) => {
+    if (a.date < b.date) return 1;
+    if (a.date > b.date) return -1;
+
+    if (dayjs(a.time).isBefore(dayjs(b.time))) return 1;
+    if (dayjs(a.time).isAfter(dayjs(b.time))) return -1;
+
+    return 0;
+  });
+
   return (
-    <div className="flex flex-col flex-nowrap justify-start items-stretch space-y-4">
-      <div className="flex flex-row flex-nowrap justify-between items-center bg-gray-300 rounded-lg p-2 space-x-4">
-        {disabled ? (
-          <LLButton type="button" twStyle="invisible">
-            Edit
-          </LLButton>
-        ) : (
-          <LLButton type="button" onClick={handleSave}>
-            Save
-          </LLButton>
-        )}
-        <h2 className="text-xl font-bold">Service History</h2>
-        {disabled ? (
-          <LLButton type="button" onClick={() => setDisabled(false)}>
-            Edit
-          </LLButton>
-        ) : (
-          <LLButton type="button" onClick={handleCancel}>
-            Cancel
-          </LLButton>
-        )}
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Location</th>
-            <th>Services</th>
-          </tr>
-        </thead>
-        <tbody ref={tableBody}>
-          {clientSH.serviceHistory?.map((contact, index) => (
-            <tr key={trKey(contact, index)}>
-              <td>
-                <SHDate defaultValue={contact.date} disabled={disabled} />
-              </td>
-              <td>
-                <SHTime
-                  defaultValue={contact.time ? contact.time : ""}
-                  disabled={disabled}
-                />
-              </td>
-              <td>
-                <SHLocation
-                  locationDocument={locationData.location}
-                  defaultCity={contact.city ? contact.city : ""}
-                  defaultLocationCategory={
-                    contact.locationCategory ? contact.locationCategory : ""
-                  }
-                  defaultLocation={contact.location ? contact.location : ""}
-                  disabled={disabled}
-                />
-              </td>
-              <td>
-                <SHServices
-                  serviceDocument={serviceData.service}
-                  locationDocument={locationData.location}
-                  defaultServices={contact.services ? contact.services : []}
-                  disabled={disabled}
-                />
-              </td>
+    <section className="p-4">
+      <div className="flex flex-col flex-nowrap justify-start items-stretch space-y-4">
+        <div className="flex flex-row flex-nowrap justify-between items-center bg-gray-300 rounded-lg p-2 space-x-4">
+          {disabled ? (
+            <LLButton type="button" twStyle="invisible">
+              Edit
+            </LLButton>
+          ) : (
+            <LLButton type="button" onClick={handleSave}>
+              Save
+            </LLButton>
+          )}
+          <h2 className="text-xl font-bold">Service History</h2>
+          {disabled ? (
+            <LLButton type="button" onClick={() => setDisabled(false)}>
+              Edit
+            </LLButton>
+          ) : (
+            <LLButton type="button" onClick={handleCancel}>
+              Cancel
+            </LLButton>
+          )}
+        </div>
+        <table className="border-collapse">
+          <thead>
+            <tr>
+              {!disabled && <th></th>}
+              <th className="border-y-2 border-l-2 border-gray-800 bg-purple-300 p-1">
+                Date
+              </th>
+              <th className="border-y-2 border-gray-800 bg-purple-300 p-1">
+                Time
+              </th>
+              <th className="border-y-2 border-gray-800 bg-purple-300 p-1">
+                Location
+              </th>
+              <th className="border-y-2 border-r-2 border-gray-800 bg-purple-300 p-1">
+                Services
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody ref={tableBody}>
+            {(!serviceHistory || serviceHistory.length === 0) && (
+              <tr>
+                {!disabled && (
+                  <td className="p-1">
+                    <LLMenuButtons
+                      width={"w-6"}
+                      height={"h-6"}
+                      visibility={"visible"}
+                      twStyle={"bg-gray-300"}
+                      onAdd={() => handleAdd(0)}
+                      onRemove={() => console.log("Nothing to delete")}
+                      horizontal={true}
+                    />
+                  </td>
+                )}
+              </tr>
+            )}
+            {serviceHistory?.map((contact, index) => (
+              <tr key={trKey(contact, index)}>
+                {!disabled && (
+                  <td className="p-1">
+                    <LLMenuButtons
+                      width={"w-6"}
+                      height={"h-6"}
+                      visibility={"visible"}
+                      twStyle={"bg-gray-300"}
+                      onAdd={() => handleAdd(index)}
+                      onRemove={() => handleDelete(index)}
+                      horizontal={true}
+                    />
+                  </td>
+                )}
+                <td className="border-x-2 border-b-2 border-gray-800 p-1">
+                  <SHDate defaultValue={contact.date} disabled={disabled} />
+                </td>
+                <td className="border-x-2 border-b-2 border-gray-800 p-1">
+                  <SHTime
+                    defaultValue={contact.time ? contact.time : ""}
+                    disabled={disabled}
+                  />
+                </td>
+                <td className="border-x-2 border-b-2 border-gray-800 p-1">
+                  <SHLocation
+                    locationDocument={locationData.location}
+                    defaultCity={contact.city ? contact.city : ""}
+                    defaultLocationCategory={
+                      contact.locationCategory ? contact.locationCategory : ""
+                    }
+                    defaultLocation={contact.location ? contact.location : ""}
+                    disabled={disabled}
+                  />
+                </td>
+                <td className="border-x-2 border-b-2 border-gray-800 p-1">
+                  <SHServices
+                    serviceDocument={serviceData.service}
+                    locationDocument={locationData.location}
+                    defaultServices={contact.services ? contact.services : []}
+                    disabled={disabled}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
   );
 };
 

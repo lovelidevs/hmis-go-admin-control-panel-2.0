@@ -18,6 +18,7 @@ const SHDate = ({
   return (
     <input
       type="date"
+      className="bg-white border rounded-lg border-gray-800 p-1"
       value={value}
       onChange={(event) => setValue(event.target.value)}
     ></input>

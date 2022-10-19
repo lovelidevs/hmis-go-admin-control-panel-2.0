@@ -11,6 +11,7 @@ const LLMenuButtons = ({
   onAdd,
   onRemove,
   customButtons,
+  horizontal,
 }: {
   width: string;
   height: string;
@@ -19,10 +20,13 @@ const LLMenuButtons = ({
   onAdd: () => void;
   onRemove: () => void;
   customButtons?: ReactNode;
+  horizontal?: boolean;
 }) => {
   return (
     <div
-      className={`${visibility} ${twStyle} flex flex-col flex-nowrap justify-center items-center p-2 rounded-lg`}
+      className={`${visibility} ${twStyle} flex flex-${
+        horizontal ? "row" : "col"
+      } flex-nowrap justify-center items-center p-2 rounded-lg`}
     >
       <LLAddButton width={width} height={height} onClick={onAdd} />
       <LLDeleteButton width={width} height={height} onClick={onRemove} />

@@ -25,7 +25,7 @@ const SHTime = ({
 
   if (disabled) {
     return (
-      <p className="whitespace-nowrap">
+      <p className={`whitespace-nowrap ${!value ? "text-center" : ""}`}>
         {value ? dayjs(value, "HH:mm").format("h:mm A") : "-"}
       </p>
     );
@@ -34,6 +34,7 @@ const SHTime = ({
   return (
     <input
       type="time"
+      className="bg-white border rounded-lg border-gray-800 p-1"
       value={value}
       onChange={(event) => setValue(event.target.value)}
     ></input>
