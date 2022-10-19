@@ -12,6 +12,7 @@ import RequireAuth from "./Authentication/RequireAuth";
 import Home from "./Routes/Home";
 import ClientSearch from "./Routes/Home/ClientSearch";
 import LocationEditor from "./Routes/Home/LocationEditor";
+import NotesEditor from "./Routes/Home/NotesEditor";
 import Reports from "./Routes/Home/Reports";
 import ServiceEditor from "./Routes/Home/ServiceEditor";
 import Login from "./Routes/Login";
@@ -40,6 +41,7 @@ const App = () => {
         { path: "services", element: <ServiceEditor /> },
         { path: "locations", element: <LocationEditor /> },
         { path: "clients", element: <ClientSearch /> },
+        { path: "notes", element: <NotesEditor /> },
       ],
     },
   ]);

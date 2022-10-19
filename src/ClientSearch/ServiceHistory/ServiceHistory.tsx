@@ -187,6 +187,8 @@ const ServiceHistory = ({
     setClientSH(clientClone);
   };
 
+  // TODO: Make wifey's change: move the add button and just use delete
+
   const handleCancel = () => {
     setDisabled(true);
     setClientSH(client);

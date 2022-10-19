@@ -15,6 +15,8 @@ import {
 
 // TODO: Implement warning dialogue for delete and custom Button
 // TODO: We'll need another prop that is customButtonDialogMessage
+// TODO: Still need to fix places
+// TODO: Fix the issue with servicelistId
 
 const DraggableList = ({
   data,

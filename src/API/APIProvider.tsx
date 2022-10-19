@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import ApolloClientProvider from "./ApolloClientProvider";
 import ClientProvider from "./ClientProvider";
 import LocationProvider from "./LocationProvider";
+import NotesProvider from "./NotesProvider";
 import ServiceProvider from "./ServiceProvider";
 
 const APIProvider = ({ children }: { children: ReactNode }): JSX.Element => {
@@ -10,7 +11,9 @@ const APIProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     <ApolloClientProvider>
       <ServiceProvider>
         <LocationProvider>
-          <ClientProvider>{children}</ClientProvider>
+          <ClientProvider>
+            <NotesProvider>{children}</NotesProvider>
+          </ClientProvider>
         </LocationProvider>
       </ServiceProvider>
     </ApolloClientProvider>
