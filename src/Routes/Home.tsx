@@ -21,6 +21,9 @@ const Home = (): JSX.Element => {
           <LLNavLink to="locations">Locations</LLNavLink>
           <LLNavLink to="clients">Clients</LLNavLink>
           <LLNavLink to="notes">Notes</LLNavLink>
+          {authContext?.userData?.role === "admin" && (
+            <LLNavLink to="users">Users</LLNavLink>
+          )}
         </nav>
         <LLButton type="button" onClick={authContext?.logOut}>
           Log Out

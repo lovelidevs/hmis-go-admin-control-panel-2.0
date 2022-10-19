@@ -15,6 +15,7 @@ import LocationEditor from "./Routes/Home/LocationEditor";
 import NotesEditor from "./Routes/Home/NotesEditor";
 import Reports from "./Routes/Home/Reports";
 import ServiceEditor from "./Routes/Home/ServiceEditor";
+import UserEditor from "./Routes/Home/UserEditor";
 import Login from "./Routes/Login";
 import RequestAccess from "./Routes/RequestAccess";
 import RequestResetPassword from "./Routes/RequestResetPassword";
@@ -42,6 +43,14 @@ const App = () => {
         { path: "locations", element: <LocationEditor /> },
         { path: "clients", element: <ClientSearch /> },
         { path: "notes", element: <NotesEditor /> },
+        {
+          path: "users",
+          element: (
+            <RequireAuth requireAdminAuth={true}>
+              <UserEditor />
+            </RequireAuth>
+          ),
+        },
       ],
     },
   ]);

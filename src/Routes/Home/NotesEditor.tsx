@@ -61,7 +61,12 @@ const NotesEditor = () => {
   }
 
   // TEST THIS
-  if (!data.notes) return <p>No Notes</p>;
+  if (!data.notes)
+    return (
+      <p className="w-full h-full flex flex-col flex-nowrap justify-center items-center text-xl">
+        No Notes
+      </p>
+    );
 
   return (
     <main className="flex flex-col flex-nowrap justify-start items-center space-y-4 py-4">
