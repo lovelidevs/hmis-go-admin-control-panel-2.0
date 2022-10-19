@@ -4,7 +4,12 @@ import { useQuery } from "@apollo/client";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
-import { Client, ClientContact, ClientContext } from "../../API/ClientProvider";
+import {
+  Client,
+  ClientContact,
+  ClientContext,
+  ClientService,
+} from "../../API/ClientProvider";
 import {
   LOAD_LOCATION_DOCUMENT,
   LocationContext,
@@ -22,7 +27,13 @@ import SHTime from "./SHTime";
 
 dayjs.extend(utc);
 
-const ServiceHistory = ({ client }: { client: Client }) => {
+const ServiceHistory = ({
+  client,
+  onSave,
+}: {
+  client: Client;
+  onSave: (clientClone: Client) => Promise<void>;
+}) => {
   const clientContext = useContext(ClientContext);
   const serviceContext = useContext(ServiceContext);
   const locationContext = useContext(LocationContext);
@@ -32,7 +43,6 @@ const ServiceHistory = ({ client }: { client: Client }) => {
 
   const tableBody = useRef<HTMLTableSectionElement>(null);
 
-  // TODO: Still running into issues where there is no locationDocumentId
   const {
     loading: servicesLoading,
     error: servicesError,
@@ -84,20 +94,25 @@ const ServiceHistory = ({ client }: { client: Client }) => {
         tr.children[2].firstElementChild as HTMLParagraphElement
       );
 
+      const services: ClientService[] | null = handleServices(
+        tr.children[3].firstElementChild as HTMLDivElement
+      );
+
       serviceHistory.push({
         date,
         time,
         city,
         locationCategory,
         location,
-        services: null,
+        services,
       });
     }
 
-    console.log(serviceHistory);
-
+    const clientClone = structuredClone(clientSH) as Client;
+    clientClone.serviceHistory = serviceHistory;
+    onSave(clientClone);
+    setClientSH(clientClone);
     setDisabled(true);
-    // TODO: Do the actual save, reload, and then reset the table
   };
 
   const handleDate = (input: HTMLInputElement) => input.value;
@@ -123,8 +138,30 @@ const ServiceHistory = ({ client }: { client: Client }) => {
     return { city, locationCategory, location };
   };
 
+  const handleServices = (element: HTMLDivElement): ClientService[] | null => {
+    const length = element.dataset.length;
+
+    if (!length) return null;
+
+    const services: ClientService[] = [];
+    for (const child of element.children) {
+      const p = child as HTMLParagraphElement;
+      console.log(p.dataset.list);
+      services.push({
+        service: p.dataset.service!,
+        text: p.dataset.text ? p.dataset.text : null,
+        count: p.dataset.count ? Number(p.dataset.count) : null,
+        units: p.dataset.units ? p.dataset.units : null,
+        list: p.dataset.list ? p.dataset.list.split(",") : null,
+      });
+    }
+
+    return services;
+  };
+
   // TODO: Sort correctly
-  // TODO: Cancel button based on disabled
+  // TODO: add button, delete button
+  // TODO: Stuff on papers
 
   const handleCancel = () => {
     setDisabled(true);
@@ -138,7 +175,7 @@ const ServiceHistory = ({ client }: { client: Client }) => {
 
   return (
     <div className="flex flex-col flex-nowrap justify-start items-stretch space-y-4">
-      <div className="flex flex-row flex-nowrap justify-between items-center bg-gray-300 rounded-lg p-2">
+      <div className="flex flex-row flex-nowrap justify-between items-center bg-gray-300 rounded-lg p-2 space-x-4">
         {disabled ? (
           <LLButton type="button" twStyle="invisible">
             Edit

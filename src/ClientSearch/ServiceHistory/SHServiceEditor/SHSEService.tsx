@@ -72,10 +72,6 @@ const SHSEService = ({
   };
 
   const handleListItemChange = (item: string, checked: boolean) => {
-    console.log(item);
-    console.log(checked);
-    console.log(index);
-
     const servicesClone = structuredClone(services) as ClientService[];
     handleListItemChangeHelper(item, checked, servicesClone);
     onChange(servicesClone);

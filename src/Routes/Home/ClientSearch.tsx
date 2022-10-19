@@ -120,11 +120,8 @@ const ClientSearch = (): JSX.Element => {
         </div>
         {data?.client && (
           <div className="flex flex-row flex-wrap justify-center items-start space-x-4 space-y-4">
-            <ClientProfile
-              client={data.client}
-              onSave={(clientClone: Client) => handleUpdateClient(clientClone)}
-            />
-            <ServiceHistory client={data.client} />
+            <ClientProfile client={data.client} onSave={handleUpdateClient} />
+            <ServiceHistory client={data.client} onSave={handleUpdateClient} />
           </div>
         )}
       </main>
