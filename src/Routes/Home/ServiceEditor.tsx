@@ -44,9 +44,10 @@ const ServiceEditor = (): JSX.Element => {
 
   const renderFx = (
     data: ServiceData,
-    onModify: (value: object) => void
+    onModify: (value: object) => void,
+    active: boolean
   ): JSX.Element => {
-    return <Service data={data} onModify={onModify} />;
+    return <Service data={data} onModify={onModify} active={active} />;
   };
 
   if (!serviceContext?.serviceDocumentId) return <LLLoadingSpinner />;

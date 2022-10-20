@@ -40,6 +40,7 @@ const DraggableListElement = ({
   renderFx: (
     data: any,
     onModify: (value: object) => void,
+    active: boolean,
     customButtonStatus?: boolean
   ) => JSX.Element;
   showDialog: (
@@ -238,6 +239,9 @@ const DraggableListElement = ({
                 value={data[dataPropNames[nestLevel]]}
                 onChange={handleCategoryModify}
                 placeholder={capitalize(dataPropNames[nestLevel])}
+                focus={
+                  activeIndexes.length === 1 && !data[dataPropNames[nestLevel]]
+                }
                 twStyle={((): string => {
                   if (nestLevel === 1) return "text-2xl";
                   if (nestLevel === 2) return "text-3xl text-white bg-gray-800";
@@ -247,8 +251,13 @@ const DraggableListElement = ({
             )}
             {nestLevel === 0 &&
               (customButtonStatusInitFx === undefined
-                ? renderFx(data, handleItemModify)
-                : renderFx(data, handleItemModify, customButtonStatus))}
+                ? renderFx(data, handleItemModify, activeIndexes.length === 1)
+                : renderFx(
+                    data,
+                    handleItemModify,
+                    activeIndexes.length === 1,
+                    customButtonStatus
+                  ))}
           </div>
           {nestLevel > 0 &&
             activeIndexes.length > 0 &&

@@ -8,6 +8,7 @@ const LLDebouncedAutoResizeTextarea = ({
   placeholder,
   cols,
   autoFocus,
+  focus,
   twStyle,
 }: {
   value: string[];
@@ -15,6 +16,7 @@ const LLDebouncedAutoResizeTextarea = ({
   placeholder?: string;
   cols?: number;
   autoFocus?: boolean;
+  focus?: boolean;
   twStyle?: string;
 }) => {
   const [optimisticValue, setOptimisticValue] = useState<string>(
@@ -33,6 +35,10 @@ const LLDebouncedAutoResizeTextarea = ({
     textarea.current.style.height = "0px";
     textarea.current.style.height = textarea.current.scrollHeight + "px";
   });
+
+  useEffect(() => {
+    if (focus && textarea.current) return textarea.current.focus();
+  }, [focus]);
 
   const debouncedOnChange = useMemo(
     () =>

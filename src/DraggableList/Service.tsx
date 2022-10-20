@@ -6,9 +6,11 @@ import LLSelect from "../LLComponents/LLSelect";
 const Service = ({
   data,
   onModify,
+  active,
 }: {
   data: ServiceData;
   onModify: (value: object) => void;
+  active: boolean;
 }) => {
   const handleModify = (properties: object) => {
     onModify({ ...structuredClone(data), ...properties });
@@ -22,6 +24,7 @@ const Service = ({
           value={data.service}
           onChange={(value) => handleModify({ service: value })}
           placeholder="Service"
+          focus={active && data.service === ""}
           twStyle="text-base"
         />
         <LLSelect
@@ -36,6 +39,7 @@ const Service = ({
           value={data.units ? data.units : ""}
           onChange={(value) => handleModify({ units: value })}
           placeholder="units"
+          focus={active && (!data.units || data.units === "")}
           twStyle="text-base"
         />
       )}
@@ -44,6 +48,12 @@ const Service = ({
           value={data.customList ? data.customList : [""]}
           onChange={(value: string[]) => handleModify({ customList: value })}
           placeholder="Custom List"
+          focus={
+            active &&
+            (!data.customList ||
+              data.customList.length === 0 ||
+              (data.customList.length === 1 && !data.customList[0]))
+          }
         />
       )}
     </div>

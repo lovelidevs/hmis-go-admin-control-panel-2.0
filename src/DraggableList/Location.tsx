@@ -7,10 +7,12 @@ import LLDebouncedInput from "../LLComponents/LLDebouncedInput";
 const Location = ({
   data,
   onModify,
+  active,
   customButtonStatus,
 }: {
   data: LocationData;
   onModify: (value: object) => void;
+  active: boolean;
   customButtonStatus: boolean;
 }) => {
   const [isPlaces, setIsPlaces] = useState<boolean>(customButtonStatus);
@@ -37,6 +39,7 @@ const Location = ({
         value={data.location}
         onChange={(value) => handleModify({ location: value })}
         placeholder="Location"
+        focus={active && data.location === ""}
         twStyle="text-base"
       />
       {isPlaces && data.places && (
@@ -44,6 +47,12 @@ const Location = ({
           value={data.places}
           onChange={(value: string[]) => handleModify({ places: value })}
           placeholder="Places"
+          focus={
+            active &&
+            (!data.places ||
+              data.places.length === 0 ||
+              (data.places.length === 1 && !data.places[0]))
+          }
         />
       )}
     </div>

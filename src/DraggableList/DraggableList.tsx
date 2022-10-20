@@ -12,12 +12,6 @@ import {
   updateIndexes,
 } from "./DraggableListUtils";
 
-// TODO: Still need to implement the focusing stuff, from Service and Location, actually ALL levels, just search focus
-
-// TODO: Implement warning dialogue for delete and custom Button
-// TODO: We'll need another prop that is customButtonYesNoQuestion
-// TODO: Fix the issue with servicelistId
-
 const DraggableList = ({
   data,
   nestLevels,
@@ -39,6 +33,7 @@ const DraggableList = ({
   renderFx: (
     data: any,
     onModify: (value: object) => void,
+    active: boolean,
     customButtonStatus?: boolean
   ) => JSX.Element;
   customButtonStatusInitFx?: (data: any, nestLevel: number) => boolean;

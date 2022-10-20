@@ -45,12 +45,14 @@ const LocationEditor = (): JSX.Element => {
   const renderFx = (
     data: LocationData,
     onModify: (value: object) => void,
+    active: boolean,
     customButtonStatus?: boolean
   ): JSX.Element => {
     return (
       <Location
         data={data}
         onModify={onModify}
+        active={active}
         customButtonStatus={customButtonStatus ? customButtonStatus : false}
       />
     );
