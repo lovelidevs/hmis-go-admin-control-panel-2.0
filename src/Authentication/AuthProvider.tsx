@@ -19,6 +19,13 @@ type AuthContextType = {
   resendConfirmationEmail: (email: string) => Promise<void>;
   requestAccess: (organization: string) => Promise<void>;
   sendResetPasswordEmail: (email: string) => Promise<void>;
+  confirmUser: (token: string | null, tokenId: string | null) => Promise<void>;
+  resetPassword: (
+    token: string | null,
+    tokenId: string | null,
+    password: string,
+    confirmPassword: string
+  ) => Promise<void>;
 };
 
 export const AuthContext = React.createContext<AuthContextType | null>(null);
@@ -127,6 +134,37 @@ const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     }
   };
 
+  const confirmUser = async (token: string | null, tokenId: string | null) => {
+    if (!token || !tokenId) throw new Error("Missing user confirmation token");
+
+    try {
+      await realmApp.current.emailPasswordAuth.confirmUser({ token, tokenId });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const resetPassword = async (
+    token: string | null,
+    tokenId: string | null,
+    password: string,
+    confirmPassword: string
+  ) => {
+    if (!token || !tokenId) throw new Error("Missing password reset token");
+
+    if (password !== confirmPassword) throw new Error("Passwords do not match");
+
+    try {
+      await realmApp.current.emailPasswordAuth.resetPassword(
+        password,
+        token,
+        tokenId
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -138,6 +176,8 @@ const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
         resendConfirmationEmail,
         requestAccess,
         sendResetPasswordEmail,
+        confirmUser,
+        resetPassword,
       }}
     >
       {children}

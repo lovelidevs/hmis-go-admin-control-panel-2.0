@@ -9,6 +9,7 @@ import {
 import APIProvider from "./API/APIProvider";
 import AuthProvider from "./Authentication/AuthProvider";
 import RequireAuth from "./Authentication/RequireAuth";
+import EmailConfirmation from "./Routes/EmailConfirmation";
 import Home from "./Routes/Home";
 import ClientSearch from "./Routes/Home/ClientSearch";
 import LocationEditor from "./Routes/Home/LocationEditor";
@@ -19,13 +20,16 @@ import UserEditor from "./Routes/Home/UserEditor";
 import Login from "./Routes/Login";
 import RequestAccess from "./Routes/RequestAccess";
 import RequestResetPassword from "./Routes/RequestResetPassword";
+import ResetPassword from "./Routes/ResetPassword";
 import SignUp from "./Routes/SignUp";
 
 const App = () => {
   const router = createBrowserRouter([
     { path: "/login", element: <Login /> },
     { path: "/sign-up", element: <SignUp /> },
+    { path: "/email-confirmation", element: <EmailConfirmation /> },
     { path: "/request-reset-password", element: <RequestResetPassword /> },
+    { path: "/reset-password", element: <ResetPassword /> },
     { path: "/request-access", element: <RequestAccess /> },
     {
       path: "/",
