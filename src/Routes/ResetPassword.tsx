@@ -40,6 +40,7 @@ const ResetPassword = (): JSX.Element => {
   };
 
   const handleKeyUp: KeyboardEventHandler<HTMLInputElement> = (event) => {
+    if (dialog.current?.open) return;
     if (event.key === "Enter") return resetPassword();
   };
 
