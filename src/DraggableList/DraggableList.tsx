@@ -1,7 +1,8 @@
-import { ReactNode, useRef, useState } from "react";
+import React, { ReactNode, useRef, useState } from "react";
 
 import isEqual from "lodash.isequal";
 
+import LLYesNoDialog from "../LLComponents/LLYesNoDialog";
 import DraggableListElement from "./DraggableListElement";
 import {
   nestedArrayObjectAdd,
@@ -47,8 +48,14 @@ const DraggableList = ({
   const [dragItemIndexes, setDragItemIndexes] = useState<number[]>([]);
   const [activeIndexes, setActiveIndexes] = useState<number[]>([]);
 
+  const [dialogYesNoQuestion, setDialogYesNoQuestion] = useState<string>("");
+  const [dialogCallback, setDialogCallback] = useState<
+    (isYes: boolean) => void
+  >(() => () => {});
+
   const uList = useRef<HTMLUListElement>(null);
   const isAdding = useRef<boolean>(false);
+  const dialog = useRef<HTMLDialogElement>(null);
 
   const handleModify = (
     child: HTMLDivElement,
@@ -162,36 +169,55 @@ const DraggableList = ({
     return indexes;
   };
 
+  const showDialog = (
+    yesNoQuestion: string,
+    callback: (isYes: boolean) => void
+  ) => {
+    if (!dialog.current?.open) {
+      setDialogYesNoQuestion(yesNoQuestion);
+      setDialogCallback(() => callback);
+      dialog.current?.showModal();
+    }
+  };
+
   return (
-    <ul
-      ref={uList}
-      className="flex flex-col flex-nowrap justify-start items-center"
-    >
-      {data[arrayPropNames[nestLevels]].map(
-        (childData: { uuid: string; [key: string]: any }, index: number) => (
-          <DraggableListElement
-            key={childData.uuid}
-            data={childData}
-            nestLevel={nestLevels}
-            dataPropNames={dataPropNames}
-            arrayPropNames={arrayPropNames}
-            dragItemIndexes={filterIndexes(dragItemIndexes, index)}
-            activeIndexes={filterIndexes(activeIndexes, index)}
-            renderFx={renderFx}
-            customButtonStatusInitFx={customButtonStatusInitFx}
-            customButton={customButton}
-            customButtonYesNoQuestion={customButtonYesNoQuestion}
-            onModify={handleModify}
-            onAdd={handleAdd}
-            onRemove={handleRemove}
-            onActivate={handleActivate}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onDragEnter={handleDragEnter}
-          />
-        )
-      )}
-    </ul>
+    <>
+      <ul
+        ref={uList}
+        className="flex flex-col flex-nowrap justify-start items-center"
+      >
+        {data[arrayPropNames[nestLevels]].map(
+          (childData: { uuid: string; [key: string]: any }, index: number) => (
+            <DraggableListElement
+              key={childData.uuid}
+              data={childData}
+              nestLevel={nestLevels}
+              dataPropNames={dataPropNames}
+              arrayPropNames={arrayPropNames}
+              dragItemIndexes={filterIndexes(dragItemIndexes, index)}
+              activeIndexes={filterIndexes(activeIndexes, index)}
+              renderFx={renderFx}
+              showDialog={showDialog}
+              customButtonStatusInitFx={customButtonStatusInitFx}
+              customButton={customButton}
+              customButtonYesNoQuestion={customButtonYesNoQuestion}
+              onModify={handleModify}
+              onAdd={handleAdd}
+              onRemove={handleRemove}
+              onActivate={handleActivate}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDragEnter={handleDragEnter}
+            />
+          )
+        )}
+      </ul>
+      <LLYesNoDialog
+        ref={dialog}
+        yesNoQuestion={dialogYesNoQuestion}
+        callback={dialogCallback}
+      />
+    </>
   );
 };
 

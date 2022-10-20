@@ -1,6 +1,7 @@
 import React from "react";
 
 import LLButton from "./LLButton";
+import LLLoadingSpinner from "./LLLoadingSpinner";
 
 type LLYesNoDialogProps = {
   yesNoQuestion: string;
@@ -11,7 +12,17 @@ const LLYesNoDialog = React.forwardRef<HTMLDialogElement, LLYesNoDialogProps>(
   (
     { yesNoQuestion, callback }: LLYesNoDialogProps,
     ref: React.ForwardedRef<HTMLDialogElement>
-  ) => {
+  ): JSX.Element => {
+    if (!yesNoQuestion || !callback)
+      return (
+        <dialog ref={ref}>
+          <form method={"dialog"}>
+            <LLLoadingSpinner />
+            <LLButton type="submit">Cancel</LLButton>
+          </form>
+        </dialog>
+      );
+
     return (
       <dialog ref={ref}>
         <form

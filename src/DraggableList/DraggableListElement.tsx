@@ -19,8 +19,10 @@ const DraggableListElement = ({
   dragItemIndexes,
   activeIndexes,
   renderFx,
+  showDialog,
   customButtonStatusInitFx,
   customButton,
+  customButtonYesNoQuestion,
   onModify,
   onAdd,
   onRemove,
@@ -40,8 +42,13 @@ const DraggableListElement = ({
     onModify: (value: object) => void,
     customButtonStatus?: boolean
   ) => JSX.Element;
+  showDialog: (
+    yesNoQuestion: string,
+    callback: (isYes: boolean) => void
+  ) => void;
   customButtonStatusInitFx?: (data: any, nestLevel: number) => boolean;
   customButton?: ReactNode;
+  customButtonYesNoQuestion?: string;
   onModify: (
     child: HTMLDivElement,
     value: object,
@@ -195,138 +202,167 @@ const DraggableListElement = ({
   };
 
   return (
-    <div
-      ref={component}
-      className="flex flex-row flex-nowrap justify-center items-start space-x-2 pl-6 pr-2"
-      onClick={handleActivate}
-    >
+    <>
       <div
-        className={`flex flex-col flex-nowrap justify-start items-stretch rounded-xl space-y-2 mb-2 ${
-          nestLevel === 1 && "bg-white border-l-8"
-        } ${nestLevel === 1 && activeIndexes.length === 0 && "border-white"} ${
-          nestLevel === 1 && activeIndexes.length > 0 && "border-cyan-300"
-        } ${nestLevel === 2 && "bg-gray-800"}`}
+        ref={component}
+        className="flex flex-row flex-nowrap justify-center items-start space-x-2 pl-6 pr-2"
+        onClick={handleActivate}
       >
         <div
-          ref={dragImage}
-          className={`flex flex-col flex-nowrap justify-start items-stretch rounded-lg space-y-2 p-2 ml-2 ${
-            nestLevel > 0 && "mb-2"
-          } ${nestLevel === 0 && "bg-stone-100"}`}
+          className={`flex flex-col flex-nowrap justify-start items-stretch rounded-xl space-y-2 mb-2 ${
+            nestLevel === 1 && "bg-white border-l-8"
+          } ${
+            nestLevel === 1 && activeIndexes.length === 0 && "border-white"
+          } ${
+            nestLevel === 1 && activeIndexes.length > 0 && "border-cyan-300"
+          } ${nestLevel === 2 && "bg-gray-800"}`}
         >
-          <DragBar
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onDragEnter={handleDragEnter}
-            onDragLeave={handleDragLeave}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-            twStyle={nestLevel === 2 ? "text-white" : ""}
-          />
-          {nestLevel > 0 && (
-            <LLDebouncedInput
-              type="text"
-              value={data[dataPropNames[nestLevel]]}
-              onChange={handleCategoryModify}
-              placeholder={capitalize(dataPropNames[nestLevel])}
-              twStyle={((): string => {
-                if (nestLevel === 1) return "text-2xl";
-                if (nestLevel === 2) return "text-3xl text-white bg-gray-800";
-                return "";
-              })()}
+          <div
+            ref={dragImage}
+            className={`flex flex-col flex-nowrap justify-start items-stretch rounded-lg space-y-2 p-2 ml-2 ${
+              nestLevel > 0 && "mb-2"
+            } ${nestLevel === 0 && "bg-stone-100"}`}
+          >
+            <DragBar
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              twStyle={nestLevel === 2 ? "text-white" : ""}
             />
-          )}
-          {nestLevel === 0 &&
-            (customButtonStatusInitFx === undefined
-              ? renderFx(data, handleItemModify)
-              : renderFx(data, handleItemModify, customButtonStatus))}
-        </div>
-        {nestLevel > 0 &&
-          activeIndexes.length > 0 &&
-          dragItemIndexes.length !== 1 && (
-            <ul
-              ref={uList}
-              className="flex flex-col flex-nowrap justify-start items-stretch"
-            >
-              {data[arrayPropNames[nestLevel - 1]].map(
-                (
-                  childData: { uuid: string; [key: string]: any },
-                  index: number
-                ) => (
-                  <DraggableListElement
-                    key={childData.uuid}
-                    data={childData}
-                    nestLevel={nestLevel - 1}
-                    dataPropNames={dataPropNames}
-                    arrayPropNames={arrayPropNames}
-                    dragItemIndexes={filterIndexes(dragItemIndexes, index)}
-                    activeIndexes={filterIndexes(activeIndexes, index)}
-                    renderFx={renderFx}
-                    onModify={handleModify}
-                    onAdd={handleAdd}
-                    onRemove={handleRemove}
-                    onActivate={handleChildActivate}
-                    onDragStart={handleChildDragStart}
-                    onDragEnd={onDragEnd}
-                    onDragEnter={handleChildDragEnter}
-                  />
-                )
-              )}
-            </ul>
-          )}
-      </div>
-      <LLMenuButtons
-        width={(() => {
-          // Not sure why `w-${nestLevel * 2 + 6}` doesn't work
-          switch (nestLevel) {
-            case 0:
-              return "w-6";
-            case 1:
-              return "w-8";
-            case 2:
-              return "w-10";
-            default:
-              return "w-6";
-          }
-        })()}
-        height={`h-${nestLevel * 2 + 6}`}
-        visibility={activeIndexes.length > 0 ? "visible" : "invisible"}
-        twStyle={((): string => {
-          switch (nestLevel) {
-            case 0:
-              return "bg-stone-100";
-            case 1:
-              return "bg-white";
-            case 2:
-              return "bg-gray-800 text-white";
-            default:
-              return "bg-stone-100";
-          }
-        })()}
-        onAdd={() => {
-          if (!component.current) return;
-          onAdd(component.current);
-        }}
-        onRemove={() => {
-          if (!component.current) return;
-          onRemove(component.current);
-        }}
-        {...((): { customButtons?: JSX.Element } => {
-          if (nestLevel > 0 || !customButton)
-            return { customButtons: undefined };
-
-          return {
-            customButtons: (
-              <button
-                type="button"
-                onClick={() => setCustomButtonStatus(!customButtonStatus)}
+            {nestLevel > 0 && (
+              <LLDebouncedInput
+                type="text"
+                value={data[dataPropNames[nestLevel]]}
+                onChange={handleCategoryModify}
+                placeholder={capitalize(dataPropNames[nestLevel])}
+                twStyle={((): string => {
+                  if (nestLevel === 1) return "text-2xl";
+                  if (nestLevel === 2) return "text-3xl text-white bg-gray-800";
+                  return "";
+                })()}
+              />
+            )}
+            {nestLevel === 0 &&
+              (customButtonStatusInitFx === undefined
+                ? renderFx(data, handleItemModify)
+                : renderFx(data, handleItemModify, customButtonStatus))}
+          </div>
+          {nestLevel > 0 &&
+            activeIndexes.length > 0 &&
+            dragItemIndexes.length !== 1 && (
+              <ul
+                ref={uList}
+                className="flex flex-col flex-nowrap justify-start items-stretch"
               >
-                {customButton}
-              </button>
-            ),
-          };
-        })()}
-      />
-    </div>
+                {data[arrayPropNames[nestLevel - 1]].map(
+                  (
+                    childData: { uuid: string; [key: string]: any },
+                    index: number
+                  ) => (
+                    <DraggableListElement
+                      key={childData.uuid}
+                      data={childData}
+                      nestLevel={nestLevel - 1}
+                      dataPropNames={dataPropNames}
+                      arrayPropNames={arrayPropNames}
+                      dragItemIndexes={filterIndexes(dragItemIndexes, index)}
+                      activeIndexes={filterIndexes(activeIndexes, index)}
+                      renderFx={renderFx}
+                      showDialog={showDialog}
+                      customButtonStatusInitFx={customButtonStatusInitFx}
+                      customButton={customButton}
+                      customButtonYesNoQuestion={customButtonYesNoQuestion}
+                      onModify={handleModify}
+                      onAdd={handleAdd}
+                      onRemove={handleRemove}
+                      onActivate={handleChildActivate}
+                      onDragStart={handleChildDragStart}
+                      onDragEnd={onDragEnd}
+                      onDragEnter={handleChildDragEnter}
+                    />
+                  )
+                )}
+              </ul>
+            )}
+        </div>
+        <LLMenuButtons
+          width={(() => {
+            // Not sure why `w-${nestLevel * 2 + 6}` doesn't work
+            switch (nestLevel) {
+              case 0:
+                return "w-6";
+              case 1:
+                return "w-8";
+              case 2:
+                return "w-10";
+              default:
+                return "w-6";
+            }
+          })()}
+          height={`h-${nestLevel * 2 + 6}`}
+          visibility={activeIndexes.length > 0 ? "visible" : "invisible"}
+          twStyle={((): string => {
+            switch (nestLevel) {
+              case 0:
+                return "bg-stone-100";
+              case 1:
+                return "bg-white";
+              case 2:
+                return "bg-gray-800 text-white";
+              default:
+                return "bg-stone-100";
+            }
+          })()}
+          onAdd={() => {
+            if (!component.current) return;
+            onAdd(component.current);
+          }}
+          onRemove={() =>
+            showDialog(
+              "Are you sure you want to delete this item?",
+              (isYes: boolean) => {
+                if (!isYes) return;
+
+                if (!component.current) return;
+                onRemove(component.current);
+              }
+            )
+          }
+          {...((): { customButtons?: JSX.Element } => {
+            if (nestLevel > 0 || !customButton)
+              return { customButtons: undefined };
+
+            return {
+              customButtons: (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (customButtonStatus === false)
+                      return setCustomButtonStatus(true);
+
+                    showDialog(
+                      customButtonYesNoQuestion
+                        ? customButtonYesNoQuestion
+                        : "Confirm action?",
+                      (isYes: boolean) => {
+                        if (!isYes) return;
+
+                        setCustomButtonStatus(!customButtonStatus);
+                      }
+                    );
+                  }}
+                >
+                  {customButton}
+                </button>
+              ),
+            };
+          })()}
+        />
+      </div>
+    </>
   );
 };
 
