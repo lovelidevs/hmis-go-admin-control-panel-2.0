@@ -12,7 +12,6 @@ import gql from "graphql-tag";
 import { v4 as uuidv4 } from "uuid";
 
 import { AuthContext } from "../Authentication/AuthProvider";
-import { ApolloClientContext } from "./ApolloClientProvider";
 
 const LOAD_LOCATION_DOCUMENT_ID = gql`
   query LoadLocationDocumentId($organization: String!) {
@@ -126,13 +125,10 @@ const LocationProvider = ({
   children: ReactNode;
 }): JSX.Element => {
   const authContext = useContext(AuthContext);
-  const apolloClientContext = useContext(ApolloClientContext);
 
   const [locationDocumentId, setLocationDocumentId] = useState<ObjectId | null>(
     null
   );
-
-  const [retry, setRetry] = useState<boolean>(true);
 
   const [loadLocationDocumentId] = useLazyQuery(LOAD_LOCATION_DOCUMENT_ID);
   const [insertLocationDocument] = useMutation(INSERT_LOCATION_DOCUMENT);
@@ -161,10 +157,9 @@ const LocationProvider = ({
     };
   }, [newLocationCategoryData]);
 
-  const initLocationDocumentId = useCallback(() => {
+  useEffect(() => {
     if (!authContext?.user) return setLocationDocumentId(null);
     if (!authContext.userData?.organization) return setLocationDocumentId(null);
-    if (!apolloClientContext?.client) return setLocationDocumentId(null);
 
     loadLocationDocumentId({
       variables: { organization: authContext.userData.organization },
@@ -192,26 +187,15 @@ const LocationProvider = ({
       onError: (error) => {
         console.log("Error loading location document _id:");
         console.log(error);
-        if (retry) {
-          console.log("Retrying to load location document _id");
-          setRetry(false);
-          loadLocationDocumentId();
-        }
       },
     });
   }, [
-    apolloClientContext?.client,
     authContext?.user,
     authContext?.userData?.organization,
-    insertLocationDocument,
     loadLocationDocumentId,
+    insertLocationDocument,
     newLocationCityData,
-    retry,
   ]);
-
-  useEffect(() => {
-    initLocationDocumentId();
-  }, [initLocationDocumentId]);
 
   const getCities = useCallback(
     (locationDocument: LocationDocument): string[] => {
