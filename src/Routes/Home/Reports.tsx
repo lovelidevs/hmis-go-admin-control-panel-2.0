@@ -82,10 +82,6 @@ const Reports = () => {
     const organization = authContext.userData?.organization;
     if (!organization) return showDialog("Organization is null");
 
-    console.log(organization);
-    console.log(startDate);
-    console.log(endDate);
-
     try {
       if (report === SERVICE_HISTORY) {
         const payload: AggregationPipelinePayload =
@@ -96,9 +92,6 @@ const Reports = () => {
           ]);
 
         if (payload.error) return showDialog(String(payload.error));
-
-        console.log(payload.result);
-
         return setData(pipelineResultToData(payload.result));
       }
     } catch (error) {

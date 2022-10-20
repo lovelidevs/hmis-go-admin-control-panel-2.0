@@ -51,8 +51,6 @@ const SignUp = () => {
     showDialog("Confirmation email sent");
   };
 
-  // TODO: need to add email-confirmation
-
   const handleKeyUp: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.key === "Enter") return signUp();
   };

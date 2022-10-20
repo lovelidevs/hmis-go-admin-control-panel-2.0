@@ -155,11 +155,11 @@ const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
     if (password !== confirmPassword) throw new Error("Passwords do not match");
 
     try {
-      await realmApp.current.emailPasswordAuth.resetPassword(
+      await realmApp.current.emailPasswordAuth.resetPassword({
         password,
         token,
-        tokenId
-      );
+        tokenId,
+      });
     } catch (error) {
       throw error;
     }

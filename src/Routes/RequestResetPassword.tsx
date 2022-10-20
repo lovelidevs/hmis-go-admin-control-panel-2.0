@@ -33,8 +33,6 @@ const RequestResetPassword = (): JSX.Element => {
     if (event.key === "Enter") return sendResetPasswordEmail();
   };
 
-  // TODO: Need to add reset-password page
-
   return (
     <>
       <LLAuthMain>
