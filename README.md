@@ -1,3 +1,19 @@
+# HMIS Go Admin Control Panel
+
+This is the Admin control panel for the mobile app HMIS Go: https://apps.apple.com/us/app/hmis-go/id6443570670
+
+1. Run reports to submit to HUD or include in fundraising materials. By default, a Service History report is available to all organizations. Contact lovelidevs@gmail.com for a custom report for your organization.
+2. Customize the services that are available for your staff to record with clients. There are 5 input types available for services: 
+- Toggle (e.g. recording administering a VI-SPDAT)
+- Counter (e.g. recording giving out 5 bus passes)
+- Textbox (e.g. recording the details of a crisis mediation)
+- Locations (e.g. recording the locations a client was transported to)
+- Custom List – the system administrator can set up a custom list of options associated with a specific service
+3. Customize the locations that are available for your staff to record when working with clients
+4. Register new clients with your organization to appear in your daily lists, update client information, and see your organization service history with a client
+5. Manage notes written by staff while out in the community
+6. Manage user status and access
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
