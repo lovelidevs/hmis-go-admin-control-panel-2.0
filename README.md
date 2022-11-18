@@ -1,6 +1,6 @@
 # HMIS Go Admin Control Panel
 
-This is the Admin control panel for the mobile app HMIS Go: https://apps.apple.com/us/app/hmis-go/id6443570670
+This is the admin control panel for the mobile app HMIS Go: https://apps.apple.com/us/app/hmis-go/id6443570670
 
 1. Run reports to submit to HUD or include in fundraising materials. By default, a Service History report is available to all organizations. Contact lovelidevs@gmail.com for a custom report for your organization.
 2. Customize the services that are available for your staff to record with clients. There are 5 input types available for services: 
