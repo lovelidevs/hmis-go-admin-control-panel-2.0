@@ -10,7 +10,7 @@ This is the Admin control panel for the mobile app HMIS Go: https://apps.apple.c
 - Locations (e.g. recording the locations a client was transported to)
 - Custom List – the system administrator can set up a custom list of options associated with a specific service
 3. Customize the locations that are available for your staff to record when working with clients
-4. Register new clients with your organization to appear in your daily lists, update client information, and see your organization service history with a client
+4. Register new clients with your organization to appear in your daily lists, update client information, and see your organization's service history with a client
 5. Manage notes written by staff while out in the community
 6. Manage user status and access
 
