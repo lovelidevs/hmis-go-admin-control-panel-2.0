@@ -1,5 +1,4 @@
-// TODO: Add unit tests
-const findNestedObjectArray = (
+export const findNestedObjectArray = (
   objectClone: any,
   indexes: number[],
   nestLevels: number,
@@ -126,7 +125,7 @@ export const updateIndexes = (
   list: HTMLUListElement,
   child: HTMLDivElement,
   indexes?: number[]
-) => {
+): number[] => {
   const index = Array.from(list.children).indexOf(child);
 
   if (indexes) indexes.push(index);
@@ -135,5 +134,5 @@ export const updateIndexes = (
   return indexes;
 };
 
-export const capitalize = (string: string) =>
+export const capitalize = (string: string): string =>
   string.charAt(0).toUpperCase() + string.slice(1);

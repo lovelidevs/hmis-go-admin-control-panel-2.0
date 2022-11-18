@@ -15,6 +15,8 @@ import Service from "../../DraggableList/Service";
 import LLAutosaveStatusBar from "../../LLComponents/LLAutosaveStatusBar";
 import LLLoadingSpinner from "../../LLComponents/LLLoadingSpinner";
 
+export const SERVICE_ARRAY_PROP_NAMES = ["services", "categories"];
+
 const ServiceEditor = (): JSX.Element => {
   const serviceContext = useContext(ServiceContext);
 
@@ -78,7 +80,7 @@ const ServiceEditor = (): JSX.Element => {
         data={data.service}
         nestLevels={1}
         dataPropNames={["service", "category"]}
-        arrayPropNames={["services", "categories"]}
+        arrayPropNames={SERVICE_ARRAY_PROP_NAMES}
         newDataFxs={[
           serviceContext.newServiceData,
           serviceContext.newServiceCategoryData,
