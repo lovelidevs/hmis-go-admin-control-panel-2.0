@@ -4,6 +4,7 @@ import { useQuery } from "@apollo/client";
 
 import {
   LOAD_USER_DATA,
+  sortUserData,
   UserDataContext,
   UserDatum,
 } from "../../API/UserDataProvider";
@@ -30,7 +31,7 @@ const UserEditor = () => {
   }
 
   const userData = structuredClone(data.userdata) as UserDatum[];
-  userDatumContext.sortUserData(userData);
+  sortUserData(userData);
 
   return (
     <main className="flex flex-col flex-nowrap justify-start items-center space-y-4 py-4">

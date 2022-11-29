@@ -24,6 +24,9 @@ const Home = (): JSX.Element => {
           {authContext?.userData?.role === "admin" && (
             <LLNavLink to="users">Users</LLNavLink>
           )}
+          {authContext?.userData?.superAdmin ? (
+            <LLNavLink to="superUsers">Super Users</LLNavLink>
+          ) : null}
         </nav>
         <LLButton type="button" onClick={authContext?.logOut}>
           Log Out

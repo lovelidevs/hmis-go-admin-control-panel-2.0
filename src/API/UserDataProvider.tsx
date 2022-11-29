@@ -43,12 +43,20 @@ export type UserDatum = {
   superAdmin: boolean | null;
 };
 
+export const sortUserData = (userData: UserDatum[]): void => {
+  userData.sort((a, b) => {
+    if (!a.role || !b.role || !a.status || !b.status) return 0;
+    if (a.role !== b.role) return a.role.localeCompare(String(b.role));
+    if (a.status !== b.status) return a.status.localeCompare(String(b.status));
+    return a.email.localeCompare(b.email);
+  });
+};
+
 type UserDataContextType = {
   updateLoading: boolean;
   updateError: ApolloError | undefined;
   updateUserDatum: (userDatum: UserDatum, property: object) => void;
   resetUserDatum: (userDatum: UserDatum) => void;
-  sortUserData: (userData: UserDatum[]) => void;
 };
 
 export const UserDataContext = React.createContext<UserDataContextType | null>(
@@ -98,16 +106,6 @@ const UserDataProvider = ({
     });
   };
 
-  const sortUserData = (userData: UserDatum[]): void => {
-    userData.sort((a, b) => {
-      if (!a.role || !b.role || !a.status || !b.status) return 0;
-      if (a.role !== b.role) return a.role.localeCompare(String(b.role));
-      if (a.status !== b.status)
-        return a.status.localeCompare(String(b.status));
-      return a.email.localeCompare(b.email);
-    });
-  };
-
   return (
     <UserDataContext.Provider
       value={{
@@ -115,7 +113,6 @@ const UserDataProvider = ({
         updateError,
         updateUserDatum,
         resetUserDatum,
-        sortUserData,
       }}
     >
       {children}

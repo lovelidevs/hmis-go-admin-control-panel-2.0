@@ -9,6 +9,7 @@ import {
 import APIProvider from "./API/APIProvider";
 import AuthProvider from "./Authentication/AuthProvider";
 import RequireAuth from "./Authentication/RequireAuth";
+import RequireSuperAdmin from "./Authentication/RequireSuperAdmin";
 import EmailConfirmation from "./Routes/EmailConfirmation";
 import Home from "./Routes/Home";
 import ClientSearch from "./Routes/Home/ClientSearch";
@@ -16,6 +17,7 @@ import LocationEditor from "./Routes/Home/LocationEditor";
 import NotesEditor from "./Routes/Home/NotesEditor";
 import Reports from "./Routes/Home/Reports";
 import ServiceEditor from "./Routes/Home/ServiceEditor";
+import SuperAdminUserEditor from "./Routes/Home/SuperAdminUserEditor";
 import UserEditor from "./Routes/Home/UserEditor";
 import Login from "./Routes/Login";
 import RequestAccess from "./Routes/RequestAccess";
@@ -53,6 +55,14 @@ const App = () => {
             <RequireAuth requireAdminAuth={true}>
               <UserEditor />
             </RequireAuth>
+          ),
+        },
+        {
+          path: "superUsers",
+          element: (
+            <RequireSuperAdmin>
+              <SuperAdminUserEditor />
+            </RequireSuperAdmin>
           ),
         },
       ],
