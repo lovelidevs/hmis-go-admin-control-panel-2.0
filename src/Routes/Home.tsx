@@ -25,7 +25,10 @@ const Home = (): JSX.Element => {
             <LLNavLink to="users">Users</LLNavLink>
           )}
           {authContext?.userData?.superAdmin ? (
-            <LLNavLink to="superUsers">Super Users</LLNavLink>
+            <>
+              <LLNavLink to="superUsers">Super Users</LLNavLink>
+              <LLNavLink to="superReports">Super Reports</LLNavLink>
+            </>
           ) : null}
         </nav>
         <LLButton type="button" onClick={authContext?.logOut}>

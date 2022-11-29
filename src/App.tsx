@@ -17,6 +17,7 @@ import LocationEditor from "./Routes/Home/LocationEditor";
 import NotesEditor from "./Routes/Home/NotesEditor";
 import Reports from "./Routes/Home/Reports";
 import ServiceEditor from "./Routes/Home/ServiceEditor";
+import SuperAdminReports from "./Routes/Home/SuperAdminReports";
 import SuperAdminUserEditor from "./Routes/Home/SuperAdminUserEditor";
 import UserEditor from "./Routes/Home/UserEditor";
 import Login from "./Routes/Login";
@@ -62,6 +63,14 @@ const App = () => {
           element: (
             <RequireSuperAdmin>
               <SuperAdminUserEditor />
+            </RequireSuperAdmin>
+          ),
+        },
+        {
+          path: "superReports",
+          element: (
+            <RequireSuperAdmin>
+              <SuperAdminReports />
             </RequireSuperAdmin>
           ),
         },

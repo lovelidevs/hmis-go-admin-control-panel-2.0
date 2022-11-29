@@ -1,7 +1,12 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 
+import { useQuery } from "@apollo/client";
 import { CSVLink } from "react-csv";
 
+import {
+  LOAD_ORGANIZATIONS,
+  organizationsDataToOrganizations,
+} from "../../API/OrganizationProvider";
 import {
   generateReport,
   SERVICE_HISTORY,
@@ -11,12 +16,14 @@ import { AuthContext } from "../../Authentication/AuthProvider";
 import LLButton from "../../LLComponents/LLButton";
 import LLLegendInput from "../../LLComponents/LLLegendInput";
 import LLLegendSelect from "../../LLComponents/LLLegendSelect";
+import LLLoadingSpinner from "../../LLComponents/LLLoadingSpinner";
 import LLOkDialog from "../../LLComponents/LLOkDialog";
 import LLTable from "../../LLComponents/LLTable/LLTable";
 
-const Reports = () => {
+const SuperAdminReports = () => {
   const authContext = useContext(AuthContext);
 
+  const [organization, setOrganization] = useState<string>("");
   const [report, setReport] = useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
@@ -27,19 +34,41 @@ const Reports = () => {
 
   const dialog = useRef<HTMLDialogElement>(null);
 
-  useEffect(() => setData(null), [report]);
+  useEffect(() => setData(null), [organization, report]);
 
   const showDialog = (message: string) => {
     setDialogMessage(message);
     if (!dialog.current?.open) dialog.current?.showModal();
   };
 
+  const {
+    loading: organizationsLoading,
+    error: organizationsError,
+    data: organizationsData,
+  } = useQuery(LOAD_ORGANIZATIONS);
+
+  const organizations: string[] = useMemo(
+    () => organizationsDataToOrganizations(organizationsData),
+    [organizationsData]
+  );
+
+  if (organizationsLoading || organizationsError) {
+    if (organizationsError) {
+      console.log("Error loading organizations:");
+      console.log(organizationsError);
+    }
+
+    return <LLLoadingSpinner />;
+  }
+
+  const handleOrganizationChange = (value: string) => setOrganization(value);
+
   const handleGenerateReport = async () => {
     try {
       setData(
         await generateReport(
           authContext?.user,
-          authContext?.userData?.organization,
+          organization,
           report,
           startDate,
           endDate
@@ -53,6 +82,12 @@ const Reports = () => {
   return (
     <>
       <main className="flex flex-col justify-start items-center space-y-4 mt-4">
+        <LLLegendSelect
+          legend="Organization"
+          value={organization}
+          onChange={handleOrganizationChange}
+          options={organizations}
+        />
         <LLLegendSelect
           legend="select report"
           value={report}
@@ -95,4 +130,4 @@ const Reports = () => {
   );
 };
 
-export default Reports;
+export default SuperAdminReports;

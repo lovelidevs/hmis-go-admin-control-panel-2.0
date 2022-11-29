@@ -55,10 +55,6 @@ const SuperAdminUserEditor = () => {
 
   if (sortedUserData) sortUserData(sortedUserData);
 
-  // TODO: Add in the autosave status bar
-  // Actually, we probably shouldn't auto save. I think an explicit button makes sense here since
-  // we're changing the organization
-
   const handleOrganizationChange = (value: string) => {
     setOrganization(value);
     loadUserData({ organization: value });
